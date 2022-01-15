@@ -5,6 +5,8 @@
 /log/
 /venv/
 
+/tests/**/*.toml
+
 *.egg-info
 *__pycache__*
 *db.sqlite3*
