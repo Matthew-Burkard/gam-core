@@ -1,0 +1,1 @@
+"""Install a Godot asset."""
