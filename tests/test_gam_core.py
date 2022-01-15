@@ -3,7 +3,7 @@ import os
 import unittest
 from pathlib import Path
 
-from gam_core import config
+from gam_core import projectconfig
 
 
 class ConfigTest(unittest.TestCase):

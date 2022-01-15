@@ -1,4 +1,4 @@
-"""Manage IO to a GAM config file."""
+"""Manage IO to a GAM project config file."""
 from pathlib import Path
 from typing import Optional
 
