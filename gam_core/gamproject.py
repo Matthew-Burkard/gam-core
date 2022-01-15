@@ -13,6 +13,6 @@ class GAMProject(BaseModel):
     homepage: Optional[str]
     license: Optional[str]
     authors: Optional[list[str]]
-    dependencies: Optional[list[str]]
-    dev_dependencies: Optional[list[str]]
+    dependencies: Optional[dict[str, str]]
+    dev_dependencies: Optional[dict[str, str]]
     godot_version: str
