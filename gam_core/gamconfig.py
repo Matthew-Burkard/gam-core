@@ -14,14 +14,22 @@ class GAMConfig(BaseModel):
     repositories: list[str] = Field(default=lambda: [])
 
 
-def load(path: str | Path | None) -> GAMConfig:
-    """Get a GAM config object from a file."""
-    path = Path(path) if path else Path.home().joinpath("./config/gam/")
-    return GAMConfig(**parse(path.read_text())["gam"])
+def get_config(path: Path | str | None) -> GAMConfig:
+    """Get a GAM config object from a file or make a new one."""
+    path = Path(path) if path else Path.home().joinpath("./config/gam/config.toml")
+    if path.exists():
+        return _load(path)
+    config = GAMConfig()
+    save(path, config)
+    return config
 
 
-def save(path: str | Path | None, config: GAMConfig | None) -> None:
+def save(path: Path | str | None, config: GAMConfig | None) -> None:
     """Save a GAM config file."""
-    path = Path(path) if path else Path.home().joinpath("./config/gam/")
+    path = Path(path) if path else Path.home().joinpath("./config/gam/config.toml")
     config = config or GAMConfig()
     path.write_text(dumps({"gam": config.dict(exclude_unset=True)}))
+
+
+def _load(path: Path | str) -> GAMConfig:
+    return GAMConfig(**parse(path.read_text())["gam"])
