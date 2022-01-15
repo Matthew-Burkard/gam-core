@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from tomlkit import dumps, parse
-from gam_core.gamproject import GAMProject
+from gam_core._gamproject import GAMProject
 
 _latest_stable_godot_version = "3.4.2"
 
