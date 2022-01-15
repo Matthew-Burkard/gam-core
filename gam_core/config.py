@@ -23,9 +23,9 @@ def load(project_root: Path | str) -> GAMProject:
     toml_file = Path(project_root).joinpath("gamproject.toml")
     if not toml_file.exists():
         raise FileNotFoundError()
-    return parse(toml_file.read_text())
+    return GAMProject(**parse(toml_file.read_text())["gamproject"])
 
 
 def _save(project_root: Path | str, gamproject: GAMProject) -> None:
-    toml = dumps(gamproject.dict(exclude_unset=True))
+    toml = dumps({"gamproject": gamproject.dict(exclude_unset=True)})
     Path(project_root).joinpath("gamproject.toml").write_text(toml)
