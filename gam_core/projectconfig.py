@@ -1,6 +1,5 @@
 """Manage IO to a GAM project config file."""
 from pathlib import Path
-from typing import Optional
 
 from tomlkit import dumps, parse
 from gam_core.gamproject import GAMProject
@@ -8,7 +7,7 @@ from gam_core.gamproject import GAMProject
 _latest_stable_godot_version = "3.4.2"
 
 
-def new(root_dir: Path | str, name: str, godot_version: Optional[str] = None) -> None:
+def new(root_dir: Path | str, name: str, godot_version: str | None = None) -> None:
     """Create a new "gamproject.toml" file."""
     gamproject = GAMProject(
         name=name,

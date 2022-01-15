@@ -1,6 +1,4 @@
 """Provides GAMProject properties definition."""
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -8,11 +6,11 @@ class GAMProject(BaseModel):
     """Dataclass for GAM project properties."""
     name: str
     version: str
-    description: Optional[str]
-    repository: Optional[str]
-    homepage: Optional[str]
-    license: Optional[str]
-    authors: Optional[list[str]]
-    dependencies: Optional[dict[str, str]]
-    dev_dependencies: Optional[dict[str, str]]
+    description: str | None
+    repository: str | None
+    homepage: str | None
+    license: str | None
+    authors: list[str] | None
+    dependencies: dict[str, str] | None
+    dev_dependencies: dict[str, str] | None
     godot_version: str
