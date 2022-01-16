@@ -1,4 +1,7 @@
 [gamproject]
-name = "gd_project"
+name = "gd_project_a"
 version = "0.1.0"
 godot_version = "3.4.2"
+packages = [
+    "/src"
+]
