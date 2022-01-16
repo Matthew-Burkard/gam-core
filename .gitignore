@@ -8,6 +8,7 @@
 /tests/test_new/
 /tests/gam_cache/
 /tests/gam_config/
+/tests/**/dist/
 
 *.egg-info
 *__pycache__*
