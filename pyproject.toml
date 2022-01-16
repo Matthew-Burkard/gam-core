@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gam-core"
-version = "0.8.8"
+version = "0.8.9"
 description = ""
 authors = ["Matthew Burkard <matthewjburkard@gmail.com>"]
 

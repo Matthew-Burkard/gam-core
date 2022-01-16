@@ -8,13 +8,19 @@ from gam_core import _projectconfig
 
 
 def build(root_dir: Path | str) -> Path:
-    """Package a Godot asset into a distributable package."""
+    """Package a Godot asset into a distributable package.
+
+    :param root_dir: Root directory of a GAM project.
+    :return: Path to the generated tarball.
+    """
+    # Remove existing build and create directories.
     root_dir = Path(root_dir)
     config = _projectconfig.load(root_dir)
     dist_path = root_dir / "dist"
     package_path = dist_path.joinpath(f"{config.name}-{config.version}")
     shutil.rmtree(package_path, ignore_errors=True)
     os.makedirs(package_path, exist_ok=True)
+    # For each glob, copy matching files and directories.
     for glob in config.packages:
         for path in Path(root_dir).glob(glob):
             dest = path.as_posix().removeprefix(root_dir.as_posix()).removeprefix("/")
@@ -24,6 +30,7 @@ def build(root_dir: Path | str) -> Path:
             else:
                 os.makedirs(package_path.joinpath(dest).parent, exist_ok=True)
                 shutil.copyfile(path, package_path.joinpath(dest))
+    # Make tarball.
     tarball_path = dist_path.joinpath(f"{config.name}-{config.version}.tar.gz")
     _make_tarfile(str(package_path), str(tarball_path))
     return tarball_path
