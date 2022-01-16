@@ -35,7 +35,7 @@ class GAMCore:
         :param path: Path to new project.
         """
         if re.match(r"^(../|./|/)", path):
-            name = re.search(r"(?<=/)(.*($|/$))", path)
+            name = re.search(r"(?<=/)([^/]+($|/$))", path).group(1)
             path = Path(path)
         else:
             name = path
