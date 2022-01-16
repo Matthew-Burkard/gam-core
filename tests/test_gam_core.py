@@ -30,4 +30,6 @@ class GAMTests(unittest.TestCase):
         self.assertEqual(gamproject.name, name)
 
     def test_build(self) -> None:
-        pass
+        project_a_root = Path.cwd().joinpath("test_projects/gd_project_a")
+        self.gam.build(project_a_root)
+        self.assertTrue(True)
