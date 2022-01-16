@@ -21,12 +21,12 @@ class GAMCore:
         cache_dir: Path | str | None = None,
     ) -> None:
         cache_dir = cache_dir or Path.home() / ".cache" / "gam"
-        cache_dir.mkdir()
+        cache_dir.mkdir(exist_ok=True)
         artifacts = cache_dir / "artifacts"
-        artifacts.mkdir()
+        artifacts.mkdir(exist_ok=True)
         config_dir.mkdir(exist_ok=True)
         cache_dir.mkdir(exist_ok=True)
-        self.config = _gamconfig.get_config(config_dir)
+        self.config = _gamconfig.get_config(config_dir / "config.toml")
 
     @staticmethod
     def new(path: str) -> None:
