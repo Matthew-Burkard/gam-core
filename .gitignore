@@ -5,7 +5,9 @@
 /log/
 /venv/
 
-/tests/**/*.toml
+/tests/test_new/
+/tests/gam_cache/
+/tests/gam_config/
 
 *.egg-info
 *__pycache__*

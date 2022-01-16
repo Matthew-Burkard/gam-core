@@ -18,7 +18,7 @@ class GAMTests(unittest.TestCase):
         super(GAMTests, self).__init__(*args)
 
     def test_new(self) -> None:
-        name = "test_config"
+        name = "test_new"
         root_dir = Path().cwd()
         project_dir = root_dir / name
         shutil.rmtree(project_dir, ignore_errors=True)
