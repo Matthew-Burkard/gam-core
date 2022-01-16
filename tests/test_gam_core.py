@@ -1,5 +1,6 @@
 """GAM Core unit tests."""
 import os
+import shutil
 import unittest
 from pathlib import Path
 
@@ -18,11 +19,13 @@ class GAMTests(unittest.TestCase):
 
     def test_new(self) -> None:
         name = "test_config"
-        root_dir = Path().cwd() / name
-        self.gam.new((root_dir / name).as_posix())
+        root_dir = Path().cwd()
+        project_dir = root_dir / name
+        shutil.rmtree(project_dir, ignore_errors=True)
+        self.gam.new(project_dir.as_posix())
         os.chdir(root_dir)
         gamproject = GAMProject(
-            **parse(root_dir.joinpath("gamproject.toml").read_text())["gamproject"]
+            **parse(project_dir.joinpath("gamproject.toml").read_text())["gamproject"]
         )
         self.assertEqual(gamproject.name, name)
 
