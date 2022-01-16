@@ -9,14 +9,16 @@ from gam_core.gam import GAMCore
 from gam_core.gamproject import GAMProject
 
 
-class ConfigTest(unittest.TestCase):
+class GAMTests(unittest.TestCase):
     def __init__(self, *args) -> None:
-        self.gam = GAMCore()
-        super(ConfigTest, self).__init__(*args)
+        gam_config = Path().cwd() / "gam_config"
+        gam_cache = Path().cwd() / "gam_cache"
+        self.gam = GAMCore(config_dir=gam_config, cache_dir=gam_cache)
+        super(GAMTests, self).__init__(*args)
 
     def test_new(self) -> None:
         name = "test_config"
-        root_dir = Path(os.getcwd()) / name
+        root_dir = Path().cwd() / name
         self.gam.new((root_dir / name).as_posix())
         os.chdir(root_dir)
         gamproject = GAMProject(
@@ -24,6 +26,5 @@ class ConfigTest(unittest.TestCase):
         )
         self.assertEqual(gamproject.name, name)
 
-
-class BuildTest(unittest.TestCase):
-    pass
+    def test_build(self) -> None:
+        pass
