@@ -29,7 +29,7 @@ class GAMCore:
         self.config = _gamconfig.get_config(config_dir / "config.toml")
 
     @staticmethod
-    def new(path: str) -> None:
+    def new(path: Path | str) -> None:
         """Create a new GAM project at the given path.
 
         :param path: Path to new project.
@@ -44,6 +44,6 @@ class GAMCore:
         _projectconfig.new(path, name)
 
     @staticmethod
-    def build(self, path: str) -> None:
+    def build(path: Path | str) -> None:
         """Build a Godot project into a distributable tarball."""
         build(path)
