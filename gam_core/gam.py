@@ -4,10 +4,10 @@ import re
 from pathlib import Path
 
 from gam_core import _gamconfig, _projectconfig
+from gam_core._add import AddHandler
+from gam_core._build import build
 
 __all__ = ("GAMCore",)
-
-from gam_core._build import build
 
 log = logging.getLogger(__name__)
 
@@ -28,6 +28,18 @@ class GAMCore:
         cache_dir.mkdir(exist_ok=True)
         self.config = _gamconfig.get_config(config_dir / "config.toml")
 
+    def add(
+        self, path: Path | str, name: str, required: bool = True, dev: bool = False
+    ) -> None:
+        """Add a dependency to a Godot project."""
+        # TODO Check for constraint.
+        #  e.g. selections@^0.8.5
+        #  e.g. "selections>=0.8.5"
+        # TODO Check lockfile fo version to use.
+        handler = AddHandler(self.config, _projectconfig.load(path))
+        new_dependency = handler.add(name)
+        # TODO Update lockfile.
+
     @staticmethod
     def build(path: Path | str) -> None:
         """Build a Godot project into a distributable tarball."""
@@ -47,8 +59,3 @@ class GAMCore:
             path = Path.cwd().joinpath(path)
         path.mkdir()
         _projectconfig.new(path, name)
-
-    @staticmethod
-    def build(path: Path | str) -> None:
-        """Build a Godot project into a distributable tarball."""
-        build(path)
