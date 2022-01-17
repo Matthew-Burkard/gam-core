@@ -13,6 +13,7 @@ def new(root_dir: Path | str, name: str, godot_version: str | None = None) -> No
         name=name,
         version="0.1.0",
         godot_version=godot_version or _latest_stable_godot_version,
+        path=root_dir,
     )
     _save(root_dir, gamproject)
 
@@ -22,7 +23,9 @@ def load(project_root: Path | str) -> GAMProject:
     toml_file = Path(project_root).joinpath("gamproject.toml")
     if not toml_file.exists():
         raise FileNotFoundError()
-    return GAMProject(**parse(toml_file.read_text())["gamproject"])
+    return GAMProject(
+        **{**parse(toml_file.read_text())["gamproject"], **{"path": project_root}}
+    )
 
 
 def _save(project_root: Path | str, gamproject: GAMProject) -> None:

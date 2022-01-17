@@ -4,26 +4,24 @@ import shutil
 import tarfile
 from pathlib import Path
 
-from gam_core import _projectconfig
+from gam_core.gamproject import GAMProject
 
 
-def build(root_dir: Path | str) -> Path:
+def build(config: GAMProject) -> Path:
     """Package a Godot asset into a distributable package.
 
-    :param root_dir: Root directory of a GAM project.
+    :param config: GAM project config.
     :return: Path to the generated tarball.
     """
     # Remove existing build and create directories.
-    root_dir = Path(root_dir)
-    config = _projectconfig.load(root_dir)
-    dist_path = root_dir / "dist"
+    dist_path = config.path / "dist"
     package_path = dist_path.joinpath(f"{config.name}-{config.version}")
     shutil.rmtree(package_path, ignore_errors=True)
     os.makedirs(package_path, exist_ok=True)
     # For each glob, copy matching files and directories.
     for glob in config.packages:
-        for path in Path(root_dir).glob(glob):
-            dest = path.as_posix().removeprefix(root_dir.as_posix()).removeprefix("/")
+        for path in Path(config.path).glob(glob):
+            dest = path.as_posix().removeprefix(f"{config.path.as_posix()}/")
             if Path(path).is_dir():
                 os.makedirs(dest, exist_ok=True)
                 shutil.copytree(path, package_path.joinpath(dest))
