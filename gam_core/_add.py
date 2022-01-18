@@ -17,26 +17,30 @@ class AddHandler:
         """Add a dependency to a GAM project.
 
         :param name: Name of the dependency to add.
-        :return: The details of the dependency
+        :return: The details of the dependency.
         """
 
         if _is_filepath(name):
-            self._add_from_file()
-        elif _in_repositories(name):
-            # TODO Add from repository.
-            pass
-        elif _is_url(name):
+            return self._add_from_file(name)
+        if _in_repositories(name):
+            return self._add_from_repository(name)
+        if _is_url(name):
             if _is_git_repository(name):
-                # TODO Add from git.
-                pass
+                return self._add_from_git(name)
             else:
-                # TODO Add from url.
-                pass
-        else:
-            # TODO Log error.
-            pass
+                return self._add_from_url(name)
+        raise ValueError(f"Could not find a matching version of package {name}")
 
-    def _add_from_file(self) -> None:
+    def _add_from_file(self, path: str) -> GAMProject:
+        pass
+
+    def _add_from_repository(self, name: str) -> GAMProject:
+        pass
+
+    def _add_from_git(self, url: str) -> GAMProject:
+        pass
+
+    def _add_from_url(self, url: str) -> GAMProject:
         pass
 
 
