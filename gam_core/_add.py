@@ -1,5 +1,7 @@
 """Install a Godot asset."""
 import re
+import tarfile
+import uuid
 from pathlib import Path
 
 from gam_core._gamconfig import GAMConfig
@@ -32,7 +34,12 @@ class AddHandler:
         raise ValueError(f"Could not find a matching version of package {name}")
 
     def _add_from_file(self, path: str) -> GAMProject:
-        pass
+        uid = str(uuid.uuid4())
+        tmp_dir = self.gam_config.cache_dir.joinpath("tmp")
+        tmp_dir.mkdir(exist_ok=True)
+        tmp_pkg_dir = tmp_dir.joinpath(uid)
+        tmp_pkg_dir.mkdir(exist_ok=True)
+        # TODO Unzip tar into tmp.
 
     def _add_from_repository(self, name: str) -> GAMProject:
         pass
@@ -59,3 +66,9 @@ def _is_filepath(name: str) -> bool:
 
 def _in_repositories(name: str) -> bool:
     return False  # TODO
+
+
+def _unzip_tar(tar_path: Path, target_path: Path) -> None:
+    tar = tarfile.open(tar_path)
+    tar.extractall(target_path)
+    tar.close()

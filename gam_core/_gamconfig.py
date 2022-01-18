@@ -8,9 +8,7 @@ from tomlkit import dumps, parse
 class GAMConfig(BaseModel):
     """GAM config variables."""
 
-    cache_dir: str = Field(
-        default=lambda: Path.home().joinpath("/.cache/gam").as_posix()
-    )
+    cache_dir: Path = Field(default=lambda: Path.home().joinpath("/.cache/gam"))
     repositories: list[str] = Field(default=lambda: [])
 
 
