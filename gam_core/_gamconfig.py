@@ -9,6 +9,9 @@ class GAMConfig(BaseModel):
     """GAM config variables."""
 
     cache_dir: Path = Field(default=lambda: Path.home().joinpath("/.cache/gam"))
+    artifacts_dir: Path = Field(
+        default=lambda: Path.home().joinpath("/.cache/gam/artifacts")
+    )
     repositories: list[str] = Field(default=lambda: [])
 
 

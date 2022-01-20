@@ -18,15 +18,10 @@ class GAMCore:
     def __init__(
         self,
         config_dir: Path | str | None = None,
-        cache_dir: Path | str | None = None,
     ) -> None:
-        cache_dir = cache_dir or Path.home() / ".cache" / "gam"
-        cache_dir.mkdir(exist_ok=True)
-        artifacts = cache_dir / "artifacts"
-        artifacts.mkdir(exist_ok=True)
-        config_dir.mkdir(exist_ok=True)
-        cache_dir.mkdir(exist_ok=True)
         self.config = _gamconfig.get_config(config_dir / "config.toml")
+        self.config.cache_dir.mkdir(exist_ok=True)
+        self.config.artifacts_dir.mkdir(exist_ok=True)
 
     def add(
         self, path: Path | str, name: str, required: bool = True, dev: bool = False
