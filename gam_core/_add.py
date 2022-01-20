@@ -4,6 +4,7 @@ import tarfile
 import uuid
 from pathlib import Path
 
+from gam_core import _projectconfig
 from gam_core._gamconfig import GAMConfig
 from gam_core.gamproject import GAMProject
 
@@ -39,7 +40,11 @@ class AddHandler:
         tmp_dir.mkdir(exist_ok=True)
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
-        # TODO Unzip tar into tmp.
+        _unzip_tar(path, tmp_pkg_dir)
+        project_config = _projectconfig.load(tmp_pkg_dir)
+        # TODO Add to cache.
+        # TODO Symlink artifact to self.gam_project.path.joinpath("addons")
+        return project_config
 
     def _add_from_repository(self, name: str) -> GAMProject:
         pass
@@ -68,7 +73,7 @@ def _in_repositories(name: str) -> bool:
     return False  # TODO
 
 
-def _unzip_tar(tar_path: Path, target_path: Path) -> None:
+def _unzip_tar(tar_path: Path | str, target_path: Path | str) -> None:
     tar = tarfile.open(tar_path)
     tar.extractall(target_path)
     tar.close()
