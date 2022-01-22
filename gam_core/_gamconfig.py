@@ -8,11 +8,11 @@ from tomlkit import dumps, parse
 class GAMConfig(BaseModel):
     """GAM config variables."""
 
-    cache_dir: Path = Field(default=lambda: Path.home().joinpath("/.cache/gam"))
+    cache_dir: Path = Field(default_factory=lambda: Path.home().joinpath(".cache/gam"))
     artifacts_dir: Path = Field(
-        default=lambda: Path.home().joinpath("/.cache/gam/artifacts")
+        default_factory=lambda: Path.home().joinpath(".cache/gam/artifacts")
     )
-    repositories: list[str] = Field(default=lambda: [])
+    repositories: list[str] = Field(default_factory=lambda: [])
 
 
 def get_config(path: Path | str | None) -> GAMConfig:

@@ -13,8 +13,7 @@ from gam_core.gamproject import GAMProject
 class GAMTests(unittest.TestCase):
     def __init__(self, *args) -> None:
         gam_config = Path().cwd() / "gam_config"
-        gam_cache = Path().cwd() / "gam_cache"
-        self.gam = GAMCore(config_dir=gam_config, cache_dir=gam_cache)
+        self.gam = GAMCore(config_dir=gam_config)
         super(GAMTests, self).__init__(*args)
 
     def test_new(self) -> None:
