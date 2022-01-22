@@ -1,5 +1,8 @@
 """Install a Godot asset."""
+import logging
+import os
 import re
+import shutil
 import tarfile
 import uuid
 from pathlib import Path
@@ -7,6 +10,9 @@ from pathlib import Path
 from gam_core import _projectconfig
 from gam_core._gamconfig import GAMConfig
 from gam_core.gamproject import GAMProject
+
+__all__ = ("AddHandler",)
+log = logging.getLogger(__name__)
 
 
 class AddHandler:
@@ -41,10 +47,17 @@ class AddHandler:
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
         _unzip_tar(path, tmp_pkg_dir)
-        project_config = _projectconfig.load(tmp_pkg_dir)
-        # TODO Add to cache.
-        # TODO Symlink artifact to self.gam_project.path.joinpath("addons")
-        return project_config
+        added_project_config = _projectconfig.load(tmp_pkg_dir)
+        pkg_name = f"{added_project_config.name}-{added_project_config.version}"
+        pkg_path = self.gam_config.artifacts_dir.joinpath(pkg_name)
+        shutil.rmtree(pkg_path)
+        pkg_path.mkdir()
+        os.symlink(
+            pkg_path,
+            Path(self.gam_project.path).joinpath("addons/added_project_config.name"),
+            target_is_directory=True,
+        )
+        return added_project_config
 
     def _add_from_repository(self, name: str) -> GAMProject:
         pass
