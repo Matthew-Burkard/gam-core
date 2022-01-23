@@ -54,7 +54,7 @@ class AddHandler:
         pkg_path.mkdir()
         os.symlink(
             pkg_path,
-            Path(self.gam_project.path).joinpath("addons/added_project_config.name"),
+            Path(self.gam_project.path).joinpath(f"addons/{added_project_config.name}"),
             target_is_directory=True,
         )
         return added_project_config
