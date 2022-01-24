@@ -21,7 +21,7 @@ class GAMCore:
     ) -> None:
         self.config = _gamconfig.get_config(config_dir / "config.toml")
         self.config.cache_dir.mkdir(exist_ok=True)
-        self.config.artifacts_dir.mkdir(exist_ok=True)
+        self.config.cache_dir.joinpath("artifacts").mkdir(exist_ok=True)
 
     def add(
         self, path: Path | str, name: str, required: bool = True, dev: bool = False

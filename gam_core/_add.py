@@ -49,7 +49,7 @@ class AddHandler:
         _unzip_tar(path, tmp_pkg_dir)
         added_project_config = _projectconfig.load(tmp_pkg_dir)
         pkg_name = f"{added_project_config.name}-{added_project_config.version}"
-        pkg_path = self.gam_config.artifacts_dir.joinpath(pkg_name)
+        pkg_path = self.gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
         shutil.rmtree(pkg_path)
         pkg_path.mkdir()
         os.symlink(
