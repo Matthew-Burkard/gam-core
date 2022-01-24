@@ -36,9 +36,9 @@ class GAMCore:
         # TODO Update lockfile.
 
     @staticmethod
-    def build(path: Path | str) -> None:
+    def build(path: Path | str) -> Path:
         """Build a Godot project into a distributable tarball."""
-        build(_projectconfig.load(path))
+        return build(_projectconfig.load(path))
 
     @staticmethod
     def new(path: Path | str) -> None:
