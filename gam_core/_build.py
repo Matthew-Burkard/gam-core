@@ -28,6 +28,10 @@ def build(config: GAMProject) -> Path:
             else:
                 os.makedirs(package_path.joinpath(dest).parent, exist_ok=True)
                 shutil.copyfile(path, package_path.joinpath(dest))
+    shutil.copyfile(
+        config.path.joinpath("gamproject.toml"),
+        package_path.joinpath("gamproject.toml"),
+    )
     # Make tarball.
     tarball_path = dist_path.joinpath(f"{config.name}-{config.version}.tar.gz")
     _make_tarfile(str(package_path), str(tarball_path))
