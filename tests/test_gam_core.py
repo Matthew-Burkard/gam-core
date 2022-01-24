@@ -14,6 +14,7 @@ class GAMTests(unittest.TestCase):
     def __init__(self, *args) -> None:
         gam_config = Path().cwd() / "gam_config"
         self.gam = GAMCore(config_dir=gam_config)
+        self.gam.config.cache_dir = Path().cwd() / "gam_cache"
         super(GAMTests, self).__init__(*args)
 
     def test_new(self) -> None:
@@ -31,4 +32,11 @@ class GAMTests(unittest.TestCase):
     def test_build(self) -> None:
         project_a_root = Path.cwd().joinpath("test_projects/gd_project_a")
         self.gam.build(project_a_root)
+        self.assertTrue(True)
+
+    def test_add(self) -> None:
+        project_root = Path.cwd().joinpath("test_projects/gd_project_b")
+        dependency_root = Path.cwd().joinpath("test_projects/gd_project_a")
+        dependency_path = self.gam.build(dependency_root)
+        self.gam.add(project_root, dependency_path.as_posix())
         self.assertTrue(True)
