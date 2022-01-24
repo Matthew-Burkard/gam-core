@@ -32,7 +32,10 @@ class GAMTests(unittest.TestCase):
     def test_build(self) -> None:
         project_a_root = Path.cwd().joinpath("test_projects/gd_project_a")
         self.gam.build(project_a_root)
-        self.assertTrue(True)
+        self.assertTrue(
+            project_a_root.joinpath(f"dist/gd_project_a-0.1.0.tar.gz").is_file()
+        )
+        # TODO Unpack tarball and confirm contents are correct.
 
     def test_add(self) -> None:
         project_root = Path.cwd().joinpath("test_projects/gd_project_b")
