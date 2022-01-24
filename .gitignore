@@ -9,6 +9,7 @@
 /tests/gam_cache/
 /tests/gam_config/
 /tests/**/dist/
+/tests/**/addons/
 
 *.egg-info
 *__pycache__*
