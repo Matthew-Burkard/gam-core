@@ -47,6 +47,7 @@ class AddHandler:
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
         _unzip_tar(path, tmp_pkg_dir)
+        # TODO Search content of tmp_pkg_dir to get extracted directory name.
         added_project_config = _projectconfig.load(tmp_pkg_dir)
         pkg_name = f"{added_project_config.name}-{added_project_config.version}"
         pkg_path = self.gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
@@ -79,7 +80,7 @@ def _is_git_repository(name: str) -> bool:
 
 def _is_filepath(name: str) -> bool:
     is_file = Path(name).is_file() or Path.cwd().joinpath(name).is_file()
-    return is_file and re.match(r"\.tar\.gz$", name)
+    return is_file and name.endswith(".tar.gz")
 
 
 def _in_repositories(name: str) -> bool:
