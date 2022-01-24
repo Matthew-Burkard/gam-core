@@ -12,6 +12,7 @@ def new(root_dir: Path | str, name: str, godot_version: str | None = None) -> No
     gamproject = GAMProject(
         name=name,
         version="0.1.0",
+        source_directory=f"addons/{name}",
         godot_version=godot_version or _latest_stable_godot_version,
         path=root_dir,
     )

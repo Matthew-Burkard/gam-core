@@ -9,6 +9,8 @@ from gam_core._build import build
 
 __all__ = ("GAMCore",)
 
+from gam_core._gamconfig import GAMConfig
+
 log = logging.getLogger(__name__)
 
 

@@ -68,11 +68,7 @@ class AddHandler:
         # Remove existing installation of this package if it exists.
         if install_path.is_symlink():
             os.remove(install_path)
-        os.symlink(
-            pkg_artifact_path,
-            install_path,
-            target_is_directory=True,
-        )
+        os.symlink(pkg_artifact_path, install_path, target_is_directory=True)
         return added_project_config
 
     def _add_from_repository(self, name: str) -> GAMProject:

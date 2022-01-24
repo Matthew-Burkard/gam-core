@@ -10,7 +10,7 @@ class GAMProject(BaseModel):
     name: str
     version: str
     godot_version: str
-    path: Path | None = Field(exclude=True)
+    source_directory: str
     packages: list[str] = Field(default=lambda: [])
     description: str | None = None
     repository: str | None = None
@@ -19,3 +19,4 @@ class GAMProject(BaseModel):
     authors: list[str] | None = None
     dependencies: dict[str, str] | None = None
     dev_dependencies: dict[str, str] | None = None
+    path: Path | None = Field(exclude=True)

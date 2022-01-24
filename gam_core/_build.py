@@ -20,8 +20,9 @@ def build(config: GAMProject) -> Path:
     os.makedirs(package_path, exist_ok=True)
     # For each glob, copy matching files and directories.
     for glob in config.packages:
-        for path in Path(config.path).glob(glob):
-            dest = path.as_posix().removeprefix(f"{config.path.as_posix()}/")
+        source_path = Path(config.path).joinpath(config.source_directory)
+        for path in source_path.glob(glob):
+            dest = path.as_posix().removeprefix(f"{source_path.as_posix()}/")
             if Path(path).is_dir():
                 os.makedirs(dest, exist_ok=True)
                 shutil.copytree(path, package_path.joinpath(dest))
