@@ -39,4 +39,6 @@ class GAMTests(unittest.TestCase):
         dependency_root = Path.cwd().joinpath("test_projects/gd_project_a")
         dependency_path = self.gam.build(dependency_root)
         self.gam.add(project_root, dependency_path.as_posix())
-        self.assertTrue(True)
+        addon_path = project_root.joinpath("addons/gd_project_a")
+        self.assertTrue(addon_path.joinpath("gam_keep_me_a").is_file())
+        self.assertTrue(addon_path.joinpath("kept/gam_kept_a").is_file())
