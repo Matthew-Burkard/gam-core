@@ -47,14 +47,22 @@ class AddHandler:
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
         _unzip_tar(path, tmp_pkg_dir)
-        # TODO Search content of tmp_pkg_dir to get extracted directory name.
-        added_project_config = _projectconfig.load(tmp_pkg_dir)
+        # Search content of tmp_pkg_dir to get extracted directory name.
+        unpacked_pkg_dir = None
+        for path, directories, files in os.walk(tmp_pkg_dir):
+            if len(directories) != 1:
+                raise ValueError(f"File not recognized as GAM tarball at {path}")
+            unpacked_pkg_dir = directories[0]
+            break
+        # Load GAM project details of added package.
+        added_project_config = _projectconfig.load(unpacked_pkg_dir)
         pkg_name = f"{added_project_config.name}-{added_project_config.version}"
-        pkg_path = self.gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
-        shutil.rmtree(pkg_path)
-        pkg_path.mkdir()
+        pkg_artifact_path = self.gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
+        shutil.rmtree(pkg_artifact_path)
+        shutil.move(unpacked_pkg_dir, pkg_artifact_path)
+        shutil.rmtree(tmp_pkg_dir)
         os.symlink(
-            pkg_path,
+            pkg_artifact_path,
             Path(self.gam_project.path).joinpath(f"addons/{added_project_config.name}"),
             target_is_directory=True,
         )
@@ -68,7 +76,6 @@ class AddHandler:
 
     def _add_from_url(self, url: str) -> GAMProject:
         pass
-
 
 def _is_url(name: str) -> bool:
     return bool(re.match(r"^https?://", name))
