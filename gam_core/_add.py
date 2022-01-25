@@ -19,13 +19,16 @@ class AddHandler:
     """Class to manage adding a dependency to a project."""
 
     def __init__(self, gam_config: GAMConfig, project_config: GAMProject) -> None:
-        self.gam_config = gam_config
-        self.gam_project = project_config
+        self._gam_config = gam_config
+        self._gam_project = project_config
+        self._needed_packages: dict[str, str] = {}
+        self._retrieved_packages: dict[str, GAMProject] = {}
 
-    def add(self, name: str) -> GAMProject:
+    def add(self, name: str, dev_dependency: bool = False) -> GAMProject:
         """Add a dependency to a GAM project.
 
         :param name: Name of the dependency to add.
+        :param dev_dependency: True if adding a dev dependency.
         :return: The details of the dependency.
         """
 
@@ -38,11 +41,12 @@ class AddHandler:
                 return self._add_from_git(name)
             else:
                 return self._add_from_url(name)
+        shutil.rmtree(self._gam_config.cache_dir.joinpath("tmp"), ignore_errors=True)
         raise ValueError(f"Could not find a matching version of package {name}")
 
     def _add_from_file(self, path: str) -> GAMProject:
         uid = str(uuid.uuid4())
-        tmp_dir = self.gam_config.cache_dir.joinpath("tmp")
+        tmp_dir = self._gam_config.cache_dir.joinpath("tmp")
         tmp_dir.mkdir(exist_ok=True)
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
@@ -56,19 +60,9 @@ class AddHandler:
             break
         # Load GAM project details of added package.
         added_project_config = _projectconfig.load(unpacked_pkg_dir)
-        pkg_name = f"{added_project_config.name}-{added_project_config.version}"
-        pkg_artifact_path = self.gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
-        # Remove artifact if it already exists.
-        shutil.rmtree(pkg_artifact_path, ignore_errors=True)
-        shutil.move(unpacked_pkg_dir, pkg_artifact_path)
-        shutil.rmtree(tmp_pkg_dir)
-        addons_path = Path(self.gam_project.path).joinpath("addons")
-        addons_path.mkdir(exist_ok=True)
-        install_path = addons_path.joinpath(added_project_config.name)
-        # Remove existing installation of this package if it exists.
-        if install_path.is_symlink():
-            os.remove(install_path)
-        os.symlink(pkg_artifact_path, install_path, target_is_directory=True)
+        self._retrieved_packages[added_project_config.name] = added_project_config
+        for dep_name, dep_ver in added_project_config.dependencies.items():
+            self._needed_packages[dep_name] = dep_ver
         return added_project_config
 
     def _add_from_repository(self, name: str) -> GAMProject:
@@ -79,6 +73,20 @@ class AddHandler:
 
     def _add_from_url(self, url: str) -> GAMProject:
         pass
+
+    def _add(self, project: GAMProject) -> None:
+        pkg_name = f"{project.name}-{project.version}"
+        pkg_artifact_path = self._gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
+        # Remove artifact if it already exists.
+        shutil.rmtree(pkg_artifact_path, ignore_errors=True)
+        shutil.move(GAMProject.path, pkg_artifact_path)
+        addons_path = Path(self._gam_project.path).joinpath("addons")
+        addons_path.mkdir(exist_ok=True)
+        install_path = addons_path.joinpath(project.name)
+        # Remove existing installation of this package if it exists.
+        if install_path.is_symlink():
+            os.remove(install_path)
+        os.symlink(pkg_artifact_path, install_path, target_is_directory=True)
 
 
 def _is_url(name: str) -> bool:
