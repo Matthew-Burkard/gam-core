@@ -16,7 +16,7 @@ class GAMProject(BaseModel):
     repository: str | None = None
     homepage: str | None = None
     license: str | None = None
-    authors: list[str] | None = None
-    dependencies: dict[str, str] | None = None
-    dev_dependencies: dict[str, str] | None = None
+    authors: list[str] = Field(default=lambda: [])
+    dependencies: list[str] = Field(default=lambda: [])
+    dev_dependencies: list[str] = Field(default=lambda: [])
     path: Path | None = Field(exclude=True)
