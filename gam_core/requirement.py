@@ -8,9 +8,9 @@ class RequirementSourceType(Enum):
     """The source of any given requirement."""
 
     FILE = auto()
-    URL = auto()
     GIT = auto()
     REPOSITORY = auto()
+    URL = auto()
 
 
 class Requirement:
@@ -29,10 +29,11 @@ class Requirement:
         else:
             raise ValueError(f"Cannot find {requirement_string} in any source.")
 
-    def _is_url(self) -> bool:
-        if bool(re.match(r"^https?://", self.requirement_string)):
-            pass  # TODO
-        return False
+    def _is_filepath(self) -> bool:
+        return (
+            Path(self.requirement_string).is_file()
+            or Path.cwd().joinpath(self.requirement_string).is_file()
+        )
 
     def _is_git(self) -> bool:
         return False  # TODO
@@ -40,8 +41,7 @@ class Requirement:
     def _is_in_repository(self) -> bool:
         return False  # TODO
 
-    def _is_filepath(self) -> bool:
-        return (
-            Path(self.requirement_string).is_file()
-            or Path.cwd().joinpath(self.requirement_string).is_file()
-        )
+    def _is_url(self) -> bool:
+        if bool(re.match(r"^https?://", self.requirement_string)):
+            pass  # TODO
+        return False
