@@ -4,8 +4,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 
-class GAMProject(BaseModel):
-    """Dataclass for GAM project properties."""
+class GAMProjectConfig(BaseModel):
+    """Dataclass for GAM project configuration details."""
 
     name: str
     version: str
@@ -19,4 +19,17 @@ class GAMProject(BaseModel):
     authors: list[str] = Field(default=lambda: [])
     dependencies: list[str] = Field(default=lambda: [])
     dev_dependencies: list[str] = Field(default=lambda: [])
-    path: Path | None = Field(exclude=True)
+
+
+class GAMLock(BaseModel):
+    """Holds GAM lock file contents."""
+
+    packages: list[GAMProjectConfig] = Field(default=lambda: [])
+
+
+class GAMProject(BaseModel):
+    """Holds GAM project properties."""
+
+    config: GAMProjectConfig
+    lock: GAMLock
+    path: Path
