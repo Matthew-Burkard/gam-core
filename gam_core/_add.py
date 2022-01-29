@@ -1,112 +1,50 @@
 """Install a Godot asset."""
-import logging
-import os
-import re
-import shutil
-import tarfile
-import uuid
-from pathlib import Path
-
-from gam_core import _projectconfig
-from gam_core._gamconfig import GAMConfig
-from gam_core.gamproject import GAMProject
-
-__all__ = ("AddHandler",)
-log = logging.getLogger(__name__)
+from gam_core import version
+from gam_core.gamproject import GAMProject, GAMProjectDetails
+from gam_core.requirement import Requirement
 
 
 class AddHandler:
     """Class to manage adding a dependency to a project."""
 
-    def __init__(self, gam_config: GAMConfig, project_config: GAMProject) -> None:
-        self._gam_config = gam_config
+    def __init__(self, project_config: GAMProject) -> None:
         self._gam_project = project_config
-        self._needed_packages: dict[str, str] = {}
-        self._retrieved_packages: dict[str, GAMProject] = {}
+        self._requirements: list[Requirement] = []
+        self._located_requirements: list[Requirement] = []
 
-    def add(self, name: str, dev_dependency: bool = False) -> GAMProject:
+    def add(
+        self, requirement_string: str, dev_dependency: bool = False
+    ) -> GAMProjectDetails:
         """Add a dependency to a GAM project.
 
-        :param name: Name of the dependency to add.
+        :param requirement_string: String describing the dependency.
         :param dev_dependency: True if adding a dev dependency.
-        :return: The details of the dependency.
+        :return: The details of the added dependency.
         """
+        requirement = Requirement(requirement_string)
+        self._requirements.append(requirement)
+        # TODO Gather all dependencies.
+        # TODO Install all requirements.
+        return requirement.project_details
 
-        if _is_filepath(name):
-            return self._add_from_file(name)
-        if _in_repositories(name):
-            return self._add_from_repository(name)
-        if _is_url(name):
-            if _is_git_repository(name):
-                return self._add_from_git(name)
-            else:
-                return self._add_from_url(name)
-        shutil.rmtree(self._gam_config.cache_dir.joinpath("tmp"), ignore_errors=True)
-        raise ValueError(f"Could not find a matching version of package {name}")
+    def _all_requirements_located(self) -> bool:
+        return all(self._is_requirement_met(r) for r in self._requirements)
 
-    def _add_from_file(self, path: str) -> GAMProject:
-        uid = str(uuid.uuid4())
-        tmp_dir = self._gam_config.cache_dir.joinpath("tmp")
-        tmp_dir.mkdir(exist_ok=True)
-        tmp_pkg_dir = tmp_dir.joinpath(uid)
-        tmp_pkg_dir.mkdir(exist_ok=True)
-        _unzip_tar(path, tmp_pkg_dir)
-        # Search content of tmp_pkg_dir to get extracted directory name.
-        unpacked_pkg_dir = None
-        for path, directories, files in os.walk(tmp_pkg_dir):
-            if len(directories) != 1:
-                raise ValueError(f"File not recognized as GAM tarball at {path}")
-            unpacked_pkg_dir = tmp_pkg_dir / directories[0]
-            break
-        # Load GAM project details of added package.
-        added_project_config = _projectconfig.load(unpacked_pkg_dir)
-        self._retrieved_packages[added_project_config.name] = added_project_config
-        for dep_name, dep_ver in added_project_config.dependencies.items():
-            self._needed_packages[dep_name] = dep_ver
-        return added_project_config
-
-    def _add_from_repository(self, name: str) -> GAMProject:
-        pass
-
-    def _add_from_git(self, url: str) -> GAMProject:
-        pass
-
-    def _add_from_url(self, url: str) -> GAMProject:
-        pass
-
-    def _add(self, project: GAMProject) -> None:
-        pkg_name = f"{project.name}-{project.version}"
-        pkg_artifact_path = self._gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
-        # Remove artifact if it already exists.
-        shutil.rmtree(pkg_artifact_path, ignore_errors=True)
-        shutil.move(GAMProject.path, pkg_artifact_path)
-        addons_path = Path(self._gam_project.path).joinpath("addons")
-        addons_path.mkdir(exist_ok=True)
-        install_path = addons_path.joinpath(project.name)
-        # Remove existing installation of this package if it exists.
-        if install_path.is_symlink():
-            os.remove(install_path)
-        os.symlink(pkg_artifact_path, install_path, target_is_directory=True)
-
-
-def _is_url(name: str) -> bool:
-    return bool(re.match(r"^https?://", name))
-
-
-def _is_git_repository(name: str) -> bool:
-    return False  # TODO
-
-
-def _is_filepath(name: str) -> bool:
-    is_file = Path(name).is_file() or Path.cwd().joinpath(name).is_file()
-    return is_file and name.endswith(".tar.gz")
-
-
-def _in_repositories(name: str) -> bool:
-    return False  # TODO
-
-
-def _unzip_tar(tar_path: Path | str, target_path: Path | str) -> None:
-    tar = tarfile.open(tar_path)
-    tar.extractall(target_path)
-    tar.close()
+    def _is_requirement_met(self, requirement: Requirement) -> bool:
+        # Is this requirement already met?
+        for installed in self._gam_project.installed:
+            if requirement.project_details.name == installed.name:
+                if version.matches(
+                    requirement.requirement_string,
+                    installed.version,
+                ):
+                    return True
+        # Has a source for this requirement been located?
+        for lr in self._located_requirements:
+            if requirement.project_details.name == lr.project_details.name:
+                if version.matches(
+                    requirement.requirement_string,
+                    lr.project_details.version,
+                ):
+                    return True
+        return False
