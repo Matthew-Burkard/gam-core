@@ -35,22 +35,22 @@ class Requirement:
             self.source = RequirementSourceType.URL
         else:
             raise ValueError(f"Cannot find {requirement_string} in any source.")
+        self._project_details: GAMProjectDetails | None = None
 
-    def matches(self, other: str) -> bool:
-        """Check this requirement matches the given requirement string."""
-        pass  # TODO
-
-    def get_requirement_project_config(self) -> GAMProjectDetails:
-        """Get the project details for this requirement."""
-        match self.source:
-            case RequirementSourceType.FILE:
-                return self._get_details_from_file()
-            case RequirementSourceType.FILE:
-                return self._get_details_from_git()
-            case RequirementSourceType.FILE:
-                return self._get_details_from_repository()
-            case RequirementSourceType.FILE:
-                return self._get_details_from_url()
+    @property
+    def project_details(self) -> GAMProjectDetails:
+        """The project details for this requirement."""
+        if self._project_details is None:
+            match self.source:
+                case RequirementSourceType.FILE:
+                    self._project_details = self._get_details_from_file()
+                case RequirementSourceType.FILE:
+                    self._project_details = self._get_details_from_git()
+                case RequirementSourceType.FILE:
+                    self._project_details = self._get_details_from_repository()
+                case RequirementSourceType.FILE:
+                    self._project_details = self._get_details_from_url()
+        return self._project_details
 
     def _get_details_from_file(self) -> GAMProjectDetails:
         uid = str(uuid.uuid4())
