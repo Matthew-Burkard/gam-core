@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 
-from gam_core._gamconfig import GAMConfig
+from gam_core.gamconfig import GAMConfig
 from gam_core.gamproject import GAMProject, GAMProjectDetails
 from gam_core.requirement import Requirement, RequirementSourceType
 
@@ -11,10 +11,7 @@ from gam_core.requirement import Requirement, RequirementSourceType
 class InstallHandler:
     """Class to handle the installation of a requirement."""
 
-    def __init__(
-        self, gam_config: GAMConfig, gam_project: GAMProject, requirement: Requirement
-    ) -> None:
-        self._gam_config = gam_config
+    def __init__(self, gam_project: GAMProject, requirement: Requirement) -> None:
         self._gam_project = gam_project
         self._requirement = requirement
 
@@ -44,7 +41,9 @@ class InstallHandler:
 
     def _install(self, project: GAMProjectDetails) -> None:
         pkg_name = f"{project.name}-{project.version}"
-        pkg_artifact_path = self._gam_config.cache_dir.joinpath(f"artifacts/{pkg_name}")
+        pkg_artifact_path = GAMConfig.get_instance().cache_dir.joinpath(
+            f"artifacts/{pkg_name}"
+        )
         # Remove artifact if it already exists.
         shutil.rmtree(pkg_artifact_path, ignore_errors=True)
         shutil.move(GAMProject.path, pkg_artifact_path)
