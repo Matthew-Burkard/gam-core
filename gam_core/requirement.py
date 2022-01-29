@@ -1,7 +1,14 @@
 """Manage requirements data."""
+import os
 import re
+import tarfile
+import uuid
 from enum import auto, Enum
 from pathlib import Path
+
+from gam_core import _projectconfig
+from gam_core.gamconfig import GAMConfig
+from gam_core.gamproject import GAMProjectDetails
 
 
 class RequirementSourceType(Enum):
@@ -20,14 +27,56 @@ class Requirement:
         self.requirement_string = requirement_string
         if self._is_filepath():
             self.source = RequirementSourceType.FILE
-        elif self._is_url():
-            self.source = RequirementSourceType.URL
         elif self._is_git():
             self.source = RequirementSourceType.GIT
         elif self._is_in_repository():
             self.source = RequirementSourceType.REPOSITORY
+        elif self._is_url():
+            self.source = RequirementSourceType.URL
         else:
             raise ValueError(f"Cannot find {requirement_string} in any source.")
+
+    def matches(self, other: str) -> bool:
+        """Check this requirement matches the given requirement string."""
+        pass  # TODO
+
+    def get_requirement_project_config(self) -> GAMProjectDetails:
+        """Get the project details for this requirement."""
+        match self.source:
+            case RequirementSourceType.FILE:
+                return self._get_details_from_file()
+            case RequirementSourceType.FILE:
+                return self._get_details_from_git()
+            case RequirementSourceType.FILE:
+                return self._get_details_from_repository()
+            case RequirementSourceType.FILE:
+                return self._get_details_from_url()
+
+    def _get_details_from_file(self) -> GAMProjectDetails:
+        uid = str(uuid.uuid4())
+        tmp_dir = GAMConfig.get_instance().cache_dir.joinpath("tmp")
+        tmp_dir.mkdir(exist_ok=True)
+        tmp_pkg_dir = tmp_dir.joinpath(uid)
+        tmp_pkg_dir.mkdir(exist_ok=True)
+        _unzip_tar(self.requirement_string, tmp_pkg_dir)
+        # Search content of tmp_pkg_dir to get extracted directory name.
+        unpacked_pkg_dir = None
+        for path, directories, files in os.walk(tmp_pkg_dir):
+            if len(directories) != 1:
+                raise ValueError(f"File not recognized as GAM tarball at {path}")
+            unpacked_pkg_dir = tmp_pkg_dir / directories[0]
+            break
+        # Load GAM project details of added package.
+        return _projectconfig.load(unpacked_pkg_dir).details
+
+    def _get_details_from_git(self) -> GAMProjectDetails:
+        pass  # TODO
+
+    def _get_details_from_repository(self) -> GAMProjectDetails:
+        pass  # TODO
+
+    def _get_details_from_url(self) -> GAMProjectDetails:
+        pass  # TODO
 
     def _is_filepath(self) -> bool:
         return (
@@ -45,3 +94,9 @@ class Requirement:
         if bool(re.match(r"^https?://", self.requirement_string)):
             pass  # TODO
         return False
+
+
+def _unzip_tar(tar_path: Path | str, target_path: Path | str) -> None:
+    tar = tarfile.open(tar_path)
+    tar.extractall(target_path)
+    tar.close()
