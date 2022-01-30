@@ -13,7 +13,7 @@ class GAMConfig:
         if GAMConfig.__instance__ is not None:
             raise AssertionError("Instance of singleton GAMConfig already exists.")
         self._path: Path = Path.home().joinpath("./config/gam/config.toml")
-        self.cache_dir: Path = (Path.home() / ".cache/gam")
+        self.cache_dir: Path = Path.home() / ".cache/gam"
         self.repositories: list[str] = []
         self.load()
 
@@ -50,5 +50,9 @@ class GAMConfig:
     def load(self) -> None:
         """Load values from config file at path,"""
         gam = parse(self._path.read_text())["gam"]
-        self.cache_dir = gam.get("cache_dir")
-        self.repositories = gam.get("repositories")
+        if cache := gam.get("cache_dir"):
+            # Make path absolute if it's relative.
+            self.cache_dir = cache if cache.startswith("/") else self._path / cache
+        else:
+            self.cache_dir = Path.home() / ".cache/gam"
+        self.repositories = gam.get("repositories") or []
