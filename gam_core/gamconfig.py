@@ -9,10 +9,10 @@ class GAMConfig:
 
     __instance__ = None
 
-    def __init__(self) -> None:
+    def __init__(self, path: Path | None) -> None:
         if GAMConfig.__instance__ is not None:
             raise AssertionError("Instance of singleton GAMConfig already exists.")
-        self._path: Path = Path.home().joinpath("./config/gam/config.toml")
+        self._path: Path = path or Path.home().joinpath(".config/gam/config.toml")
         self.cache_dir: Path = Path.home() / ".cache/gam"
         self.repositories: list[str] = []
         self.load()
@@ -23,19 +23,19 @@ class GAMConfig:
         return self._path
 
     @path.setter
-    def path(self, p: Path) -> None:
-        self._path = p
+    def path(self, path: Path) -> None:
+        self._path = path
         self.load()
 
     @staticmethod
-    def get_instance() -> "GAMConfig":
+    def get_instance(path: Path | None = None) -> "GAMConfig":
         """Get the instance of GAMConfig.
 
         If it does not already exist it will be created.
         """
         if GAMConfig.__instance__ is not None:
             return GAMConfig.__instance__
-        return GAMConfig()
+        return GAMConfig(path)
 
     def save(self) -> None:
         """Save a GAM config file."""
