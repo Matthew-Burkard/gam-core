@@ -85,10 +85,10 @@ class Requirement:
         )
 
     def _is_git(self) -> bool:
-        return False  # TODO
+        pass  # TODO
 
     def _is_in_repository(self) -> bool:
-        return False  # TODO
+        pass  # TODO
 
     def _is_url(self) -> bool:
         if bool(re.match(r"^https?://", self.requirement_string)):
