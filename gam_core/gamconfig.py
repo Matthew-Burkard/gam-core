@@ -35,7 +35,9 @@ class GAMConfig:
         """
         if GAMConfig.__instance__ is not None:
             return GAMConfig.__instance__
-        return GAMConfig(path)
+        instance = GAMConfig(path)
+        GAMConfig.__instance__ = instance
+        return instance
 
     def save(self) -> None:
         """Save a GAM config file."""
