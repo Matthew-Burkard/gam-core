@@ -6,7 +6,7 @@ import uuid
 from enum import auto, Enum
 from pathlib import Path
 
-from gam_core import _projectconfig
+from gam_core import project
 from gam_core.gamconfig import GAMConfig
 from gam_core.gamproject import GAMProjectDetails
 
@@ -67,7 +67,7 @@ class Requirement:
             unpacked_pkg_dir = tmp_pkg_dir / directories[0]
             break
         # Load GAM project details of added package.
-        return _projectconfig.load(unpacked_pkg_dir).details
+        return project.load(unpacked_pkg_dir).details
 
     def _get_details_from_git(self) -> GAMProjectDetails:
         pass  # TODO
