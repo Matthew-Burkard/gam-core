@@ -8,7 +8,7 @@ from pathlib import Path
 
 from gamcore.gamconfig import GAMConfig
 from gamcore.models import GAMProject
-from gamcore.utils import project
+from gamcore.handlers.project import ProjectHandler
 
 
 class RequirementSourceType(Enum):
@@ -20,7 +20,7 @@ class RequirementSourceType(Enum):
     URL = auto()
 
 
-class Requirement:
+class RequirementHandler:
     """Represents a GAM project requirement."""
 
     def __init__(self, requirement_string: str):
@@ -67,7 +67,8 @@ class Requirement:
             unpacked_pkg_dir = tmp_pkg_dir / directories[0]
             break
         # Load GAM project details of added package.
-        return project.load(unpacked_pkg_dir)
+        project = ProjectHandler(unpacked_pkg_dir)
+        return project.details
 
     def _get_details_from_git(self) -> GAMProject:
         pass  # TODO

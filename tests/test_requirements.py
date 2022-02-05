@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from gamcore.gamconfig import GAMConfig
-from gamcore.utils import Requirement, RequirementSourceType
+from gamcore.handlers.requirement import RequirementHandler, RequirementSourceType
 
 from gamcore.models import GAMProject
 
@@ -16,13 +16,14 @@ class RequirementTests(unittest.TestCase):
         super(RequirementTests, self).__init__(*args)
 
     def test_filepath_requirement_type(self) -> None:
-        filepath_req = Path.cwd() / "../tests/test_projects/gd_project_a-0.1.0.tar.gz"
-        requirement = Requirement(filepath_req.as_posix())
+        new_project = GAMProject
+        filepath_req = Path.cwd() / "test_projects/gd_project_a-0.1.0.tar.gz"
+        requirement = RequirementHandler(filepath_req.as_posix())
         self.assertEqual(RequirementSourceType.FILE, requirement.source)
 
     def test_filepath_project_details(self) -> None:
         filepath_req = Path.cwd() / "../tests/test_projects/gd_project_a-0.1.0.tar.gz"
-        requirement = Requirement(filepath_req.as_posix())
+        requirement = RequirementHandler(filepath_req.as_posix())
         details = GAMProject(
             name="gd_project_a",
             version="0.1.0",

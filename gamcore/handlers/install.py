@@ -4,15 +4,15 @@ import shutil
 from pathlib import Path
 
 from gamcore.gamconfig import GAMConfig
-from gamcore.utils import project
-from gamcore.utils.requirement import Requirement, RequirementSourceType
+from gamcore.handlers import project
+from gamcore.handlers.requirement import RequirementHandler, RequirementSourceType
 
 
-def install(project_path: Path | str, requirement: Requirement) -> bool:
+def install(project_path: Path | str, requirement: RequirementHandler) -> bool:
     """Install the requirement into the project."""
     match requirement.source:
         case RequirementSourceType.FILE:
-            return _install_from_file()
+            return _install_from_file(project_path)
         case RequirementSourceType.FILE:
             return _install_from_git()
         case RequirementSourceType.FILE:
@@ -23,7 +23,7 @@ def install(project_path: Path | str, requirement: Requirement) -> bool:
 
 def _install_from_file(project_path: Path | str, tarball_path: Path | str) -> bool:
     # TODO Copy tarball to tmp.
-    pkg_artifact_path = GAMConfig.get_instance().tmp
+    # pkg_artifact_path = GAMConfig.get_instance().
     shutil.copytree()
     # TODO Unzip tarball to package_tmp.
     package_tmp = "TODO"
