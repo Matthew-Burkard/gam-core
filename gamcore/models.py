@@ -1,9 +1,8 @@
-"""Provides GAMProject properties definition."""
-
+"""GAM models."""
 from pydantic import BaseModel, Field
 
 
-class GAMProjectDetails(BaseModel):
+class GAMProject(BaseModel):
     """Dataclass for GAM project configuration details."""
 
     name: str
@@ -18,9 +17,3 @@ class GAMProjectDetails(BaseModel):
     authors: list[str] = Field(default=lambda: [])
     dependencies: list[str] = Field(default=lambda: [])
     dev_dependencies: list[str] = Field(default=lambda: [])
-
-
-class GAMLock(BaseModel):
-    """Holds GAM lock file contents."""
-
-    packages: list[GAMProjectDetails] = Field(default=lambda: [])

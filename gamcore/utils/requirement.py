@@ -6,9 +6,9 @@ import uuid
 from enum import auto, Enum
 from pathlib import Path
 
-from gam_core import project
-from gam_core.gamconfig import GAMConfig
-from gam_core.gamproject import GAMProjectDetails
+from gamcore.gamconfig import GAMConfig
+from gamcore.models import GAMProject
+from gamcore.utils import project
 
 
 class RequirementSourceType(Enum):
@@ -35,10 +35,10 @@ class Requirement:
             self.source = RequirementSourceType.URL
         else:
             raise ValueError(f"Cannot find {requirement_string} in any source.")
-        self._project_details: GAMProjectDetails | None = None
+        self._project_details: GAMProject | None = None
 
     @property
-    def project_details(self) -> GAMProjectDetails:
+    def project_details(self) -> GAMProject:
         """The project details for this requirement."""
         if self._project_details is None:
             match self.source:
@@ -52,7 +52,7 @@ class Requirement:
                     self._project_details = self._get_details_from_url()
         return self._project_details
 
-    def _get_details_from_file(self) -> GAMProjectDetails:
+    def _get_details_from_file(self) -> GAMProject:
         uid = str(uuid.uuid4())
         tmp_dir = GAMConfig.get_instance().cache_dir.joinpath("tmp")
         tmp_dir.mkdir(exist_ok=True)
@@ -67,15 +67,15 @@ class Requirement:
             unpacked_pkg_dir = tmp_pkg_dir / directories[0]
             break
         # Load GAM project details of added package.
-        return project.load(unpacked_pkg_dir).details
+        return project.load(unpacked_pkg_dir)
 
-    def _get_details_from_git(self) -> GAMProjectDetails:
+    def _get_details_from_git(self) -> GAMProject:
         pass  # TODO
 
-    def _get_details_from_repository(self) -> GAMProjectDetails:
+    def _get_details_from_repository(self) -> GAMProject:
         pass  # TODO
 
-    def _get_details_from_url(self) -> GAMProjectDetails:
+    def _get_details_from_url(self) -> GAMProject:
         pass  # TODO
 
     def _is_filepath(self) -> bool:

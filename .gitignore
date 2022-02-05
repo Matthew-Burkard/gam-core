@@ -7,7 +7,6 @@
 
 /tests/test_new/
 /tests/gam_cache/
-/tests/gam_config/
 /tests/**/dist/
 /tests/**/addons/
 
