@@ -6,15 +6,15 @@ from pathlib import Path
 
 from tomlkit import parse
 
-from gam_core.gam import GAMCore
+from gam_core.gamconfig import GAMConfig
 from gam_core.gamproject import GAMProject
 
 
 class GAMTests(unittest.TestCase):
     def __init__(self, *args) -> None:
-        gam_config = Path().cwd() / "gam_config"
-        self.gam = GAMCore(config_dir=gam_config)
-        self.gam.config.cache_dir = Path().cwd() / "gam_cache"
+        gam_config = Path().cwd() / "gam_config/config.toml"
+        self.config = GAMConfig.get_instance(gam_config)
+        self.config.cache_dir = Path().cwd() / "gam_cache"
         super(GAMTests, self).__init__(*args)
 
     def test_new(self) -> None:
@@ -22,7 +22,7 @@ class GAMTests(unittest.TestCase):
         root_dir = Path().cwd()
         project_dir = root_dir / name
         shutil.rmtree(project_dir, ignore_errors=True)
-        self.gam.new(project_dir.as_posix())
+        new(project_dir.as_posix())
         os.chdir(root_dir)
         gamproject = GAMProject(
             **parse(project_dir.joinpath("gamproject.toml").read_text())["gamproject"]

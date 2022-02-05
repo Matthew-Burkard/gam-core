@@ -1,7 +1,9 @@
 """Install a Godot asset."""
 from gam_core import version
-from gam_core.gamproject import GAMProject, GAMProjectDetails
+from gam_core.gamproject import GAMProjectDetails
+from gam_core.project import GAMProject
 from gam_core.requirement import Requirement
+from gam_core.version import gather_dependencies
 
 
 class AddHandler:
@@ -22,7 +24,7 @@ class AddHandler:
         :return: The details of the added dependency.
         """
         requirement = Requirement(requirement_string)
-        self._requirements.append(requirement)
+        self._requirements.extend(gather_dependencies([requirement]))
         # TODO Gather all dependencies.
         # TODO Install all requirements.
         return requirement.project_details

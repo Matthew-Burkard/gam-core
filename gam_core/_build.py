@@ -4,10 +4,10 @@ import shutil
 import tarfile
 from pathlib import Path
 
-from gam_core.gamproject import GAMProject
+from gam_core.gamproject import GAMProjectDetails
 
 
-def build(config: GAMProject) -> Path:
+def build(config: GAMProjectDetails) -> Path:
     """Package a Godot asset into a distributable package.
 
     :param config: GAM project config.
