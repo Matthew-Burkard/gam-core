@@ -1,21 +1,41 @@
 """Manage IO to a GAM config file."""
 from pathlib import Path
 
-from tomlkit import dumps, parse
+import tomlkit
 
 
 class GAMConfig:
     """GAM config variables."""
 
-    __instance__ = None
+    __instance__: "GAMConfig" = None
 
-    def __init__(self, path: Path | None) -> None:
+    def __init__(self, path: Path | None = None) -> None:
         if GAMConfig.__instance__ is not None:
             raise AssertionError("Instance of singleton GAMConfig already exists.")
         self._path: Path = path or Path.home().joinpath(".config/gam/config.toml")
-        self.cache_dir: Path = Path.home() / ".cache/gam"
+        self._cache_dir: str = (Path.home() / ".cache/gam").as_posix()
+        if not self.cache_dir.exists():
+            self.cache_dir.mkdir()
+        if not self._path.parent.exists():
+            self._path.parent.mkdir()
         self.repositories: list[str] = []
-        self.load()
+        if self._path.exists():
+            self.load()
+        else:
+            self.save()
+
+    @property
+    def cache_dir(self) -> Path:
+        """The GAM cache directory for installed packages."""
+        return Path(
+            self._cache_dir
+            if self._cache_dir.startswith("/")
+            else self._path / self._cache_dir
+        )
+
+    @cache_dir.setter
+    def cache_dir(self, cache_dir: Path | str) -> None:
+        self._cache_dir = str(cache_dir)
 
     @property
     def path(self) -> Path:
@@ -34,6 +54,8 @@ class GAMConfig:
         If it does not already exist it will be created.
         """
         if GAMConfig.__instance__ is not None:
+            if path is not None:
+                GAMConfig.__instance__.path = path
             return GAMConfig.__instance__
         instance = GAMConfig(path)
         GAMConfig.__instance__ = instance
@@ -43,18 +65,17 @@ class GAMConfig:
         """Save a GAM config file."""
         gam_dict = {
             "gam": {
-                "cache_dir": self.cache_dir,
+                "cache_dir": self._cache_dir,
                 "repositories": self.repositories,
             }
         }
-        self._path.write_text(dumps(gam_dict))
+        if not self._path.exists():
+            self._path.touch()
+        self._path.write_text(tomlkit.dumps(gam_dict))
 
     def load(self) -> None:
-        """Load values from config file at path,"""
-        gam = parse(self._path.read_text())["gam"]
-        if cache := gam.get("cache_dir"):
-            # Make path absolute if it's relative.
-            self.cache_dir = cache if cache.startswith("/") else self._path / cache
-        else:
-            self.cache_dir = Path.home() / ".cache/gam"
+        """Load values from config file at path."""
+        gam = tomlkit.parse(self._path.read_text())["gam"]
+        self._cache_dir = gam.get("cache_dir")
+        # Make path absolute if it's relative.
         self.repositories = gam.get("repositories") or []
