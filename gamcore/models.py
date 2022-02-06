@@ -1,11 +1,9 @@
-"""Provides GAMProject properties definition."""
-from pathlib import Path
-
+"""GAM models."""
 from pydantic import BaseModel, Field
 
 
 class GAMProject(BaseModel):
-    """Dataclass for GAM project properties."""
+    """Dataclass for GAM project configuration details."""
 
     name: str
     version: str
@@ -16,7 +14,6 @@ class GAMProject(BaseModel):
     repository: str | None = None
     homepage: str | None = None
     license: str | None = None
-    authors: list[str] | None = None
-    dependencies: dict[str, str] | None = None
-    dev_dependencies: dict[str, str] | None = None
-    path: Path | None = Field(exclude=True)
+    authors: list[str] = Field(default=lambda: [])
+    dependencies: list[str] = Field(default=lambda: [])
+    dev_dependencies: list[str] = Field(default=lambda: [])
