@@ -1,4 +1,5 @@
 """Unit test_projects around requirements."""
+import shutil
 import unittest
 from pathlib import Path
 
@@ -17,19 +18,25 @@ class RequirementHandlerTests(unittest.TestCase):
 
     def test_filepath_requirement_type(self) -> None:
         test_projects_dir = Path.cwd() / "test_projects"
-        new_project = ProjectHandler.new(test_projects_dir, "test_filepath_requirement")
-        filepath_req = Path.cwd() / "test_projects/gd_project_a-0.1.0.tar.gz"
+        name = "test_filepath_req"
+        shutil.rmtree(test_projects_dir / name, ignore_errors=True)
+        new_project = ProjectHandler.new(test_projects_dir, name)
+        filepath_req = new_project.build()
         requirement = RequirementHandler(filepath_req.as_posix())
         self.assertEqual(RequirementSourceType.FILE, requirement.source)
 
     def test_filepath_project_details(self) -> None:
-        filepath_req = Path.cwd() / "test_projects/gd_project_a-0.1.0.tar.gz"
+        test_projects_dir = Path.cwd() / "test_projects"
+        name = "test_filepath_details"
+        shutil.rmtree(test_projects_dir / name, ignore_errors=True)
+        new_project = ProjectHandler.new(test_projects_dir, name)
+        filepath_req = new_project.build()
         requirement = RequirementHandler(filepath_req.as_posix())
         details = GAMProject(
-            name="gd_project_a",
+            name=name,
             version="0.1.0",
-            godot_version="3.4.2",
+            godot_version=">=4.0",
             source_directory="src",
-            packages=["./gam_keep_me_a", "./kept/"],
+            packages=["**/*"],
         )
         self.assertEqual(details, requirement.project_details)
