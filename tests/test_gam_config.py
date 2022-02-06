@@ -49,7 +49,7 @@ class GAMConfigTests(unittest.TestCase):
     def test_new_config(self) -> None:
         GAMConfig.__instance__ = None
         shutil.rmtree(Path().cwd() / "gam_cache/new_config/", ignore_errors=True)
-        gam_config = Path().cwd() / "gam_config/new/a/config.toml"
+        gam_config = Path().cwd() / "gam_cache/new_config/a/config.toml"
         GAMConfig.get_instance(gam_config)
         self.assertTrue(gam_config.is_file())
 
