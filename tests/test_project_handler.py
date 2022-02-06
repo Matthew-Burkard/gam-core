@@ -48,3 +48,24 @@ class ProjectHandlerTests(unittest.TestCase):
             ProjectHandler(test_projects_dir / name)
         except FileNotFoundError:
             self.assertTrue(True)
+
+    def test_build(self) -> None:
+        test_projects_dir = Path.cwd() / "test_projects"
+        name = "test_build"
+        shutil.rmtree(test_projects_dir.joinpath(name), ignore_errors=True)
+        handler = ProjectHandler.new(test_projects_dir, name)
+        test_projects_dir.joinpath(f"{name}/src/source_file").touch()
+        test_projects_dir.joinpath(f"{name}/src/sub_dir").mkdir()
+        test_projects_dir.joinpath(f"{name}/src/sub_dir/file").touch()
+        handler.build()
+        self.assertTrue(
+            test_projects_dir.joinpath(f"{name}/dist/{name}-0.1.0.tar.gz").exists()
+        )
+        self.assertTrue(
+            test_projects_dir.joinpath(f"{name}/dist/{name}-0.1.0/source_file").exists()
+        )
+        self.assertTrue(
+            test_projects_dir.joinpath(
+                f"{name}/dist/{name}-0.1.0/sub_dir/file"
+            ).exists()
+        )
