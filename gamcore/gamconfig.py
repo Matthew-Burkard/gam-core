@@ -27,15 +27,16 @@ class GAMConfig:
     @property
     def cache_dir(self) -> Path:
         """The GAM cache directory for installed packages."""
-        return Path(
-            self._cache_dir
+        return (
+            Path(self._cache_dir)
             if self._cache_dir.startswith("/")
-            else self._path / self._cache_dir
+            else self._path.parent / self._cache_dir
         )
 
     @cache_dir.setter
     def cache_dir(self, cache_dir: Path | str) -> None:
-        self._cache_dir = str(cache_dir)
+        if cache_dir.resolve() != self.cache_dir.resolve():
+            self._cache_dir = cache_dir.as_posix()
 
     @property
     def path(self) -> Path:
