@@ -1,3 +1,3 @@
 [gam]
-cache_dir = "/gam_cache"
+cache_dir = "../gam_cache/"
 repositories = ["http://localhost:6050/"]
