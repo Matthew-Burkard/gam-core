@@ -15,8 +15,6 @@ class GAMConfig:
             raise AssertionError("Instance of singleton GAMConfig already exists.")
         self._path: Path = path or Path.home().joinpath(".config/gam/config.toml")
         self._cache_dir: str = (Path.home() / ".cache/gam").as_posix()
-        if not self.cache_dir.exists():
-            self.cache_dir.mkdir()
         if not self._path.parent.exists():
             os.makedirs(self._path.parent)
         self.repositories: list[str] = []
@@ -24,6 +22,8 @@ class GAMConfig:
             self.load()
         else:
             self.save()
+        if not self.cache_dir.exists():
+            os.makedirs(self.cache_dir)
 
     @property
     def cache_dir(self) -> Path:

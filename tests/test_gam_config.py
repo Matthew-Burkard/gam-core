@@ -7,6 +7,11 @@ from gamcore.gamconfig import GAMConfig
 
 
 class GAMConfigTests(unittest.TestCase):
+    def __init__(self, *args) -> None:
+        cache_dir = Path().cwd() / "gam_cache"
+        shutil.rmtree(cache_dir, ignore_errors=True)
+        super(GAMConfigTests, self).__init__(*args)
+
     def test_load_save_integrity(self) -> None:
         GAMConfig.__instance__ = None
         gam_config = Path().cwd() / "gam_config/integrity_test.toml"
@@ -48,7 +53,6 @@ class GAMConfigTests(unittest.TestCase):
 
     def test_new_config(self) -> None:
         GAMConfig.__instance__ = None
-        Path().cwd() / "gam_cache/new_config/a/config.toml"
         gam_config = Path().cwd() / "gam_cache/new_config/a/config.toml"
         # Make it twice to confirm it's no problem if it already exists.
         config = GAMConfig.get_instance(gam_config)
