@@ -1,4 +1,5 @@
 """Manage IO to a GAM config file."""
+import os
 from pathlib import Path
 
 import tomlkit
@@ -17,7 +18,7 @@ class GAMConfig:
         if not self.cache_dir.exists():
             self.cache_dir.mkdir()
         if not self._path.parent.exists():
-            self._path.parent.mkdir()
+            os.makedirs(self._path.parent)
         self.repositories: list[str] = []
         if self._path.exists():
             self.load()
