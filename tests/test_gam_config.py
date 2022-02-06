@@ -1,4 +1,5 @@
 """Test GAMConfig management."""
+import shutil
 import unittest
 from pathlib import Path
 
@@ -46,7 +47,11 @@ class GAMConfigTests(unittest.TestCase):
         self.assertEqual(cache_dir.resolve(), config.cache_dir.resolve())
 
     def test_new_config(self) -> None:
-        pass
+        GAMConfig.__instance__ = None
+        shutil.rmtree(Path().cwd() / "gam_cache/new_config/", ignore_errors=True)
+        gam_config = Path().cwd() / "gam_config/new/a/config.toml"
+        GAMConfig.get_instance(gam_config)
+        self.assertTrue(gam_config.is_file())
 
     def test_singleton(self) -> None:
         GAMConfig.__instance__ = None
