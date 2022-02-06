@@ -5,9 +5,10 @@ import tomlkit
 from tomlkit import parse
 
 from gamcore.models import GAMProject
+from gamcore.templates.godot_project_file import project_file
 
 __all__ = ("ProjectHandler",)
-latest_supported_godot = "3.4.2"
+latest_supported_godot = ">=4.0"
 
 
 class ProjectHandler:
@@ -35,7 +36,15 @@ class ProjectHandler:
             source_directory="src",
             packages=["src"],
         )
-        return ProjectHandler(path, details=details)
+        project_root = Path(path).joinpath(name)
+        if project_root.exists():
+            raise FileExistsError(f"{project_root.as_posix()} already exists.")
+        project_root.mkdir()
+        project_root.joinpath("src").mkdir()
+        godot_project_file = project_root / "project.godot"
+        godot_project_file.touch()
+        godot_project_file.write_text(project_file.format(name=name))
+        return ProjectHandler(project_root, details=details)
 
     def _save(self) -> None:
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})
