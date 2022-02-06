@@ -65,7 +65,6 @@ class ProjectHandler:
             for path in source_path.glob(glob):
                 dest = path.as_posix().removeprefix(f"{source_path.as_posix()}/")
                 if Path(path).is_dir():
-                    os.makedirs(dest, exist_ok=True)
                     shutil.copytree(path, package_path.joinpath(dest))
                 else:
                     os.makedirs(package_path.joinpath(dest).parent, exist_ok=True)
