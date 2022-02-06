@@ -48,9 +48,19 @@ class GAMConfigTests(unittest.TestCase):
 
     def test_new_config(self) -> None:
         GAMConfig.__instance__ = None
-        shutil.rmtree(Path().cwd() / "gam_cache/new_config/", ignore_errors=True)
+        Path().cwd() / "gam_cache/new_config/a/config.toml"
         gam_config = Path().cwd() / "gam_cache/new_config/a/config.toml"
-        GAMConfig.get_instance(gam_config)
+        # Make it twice to confirm it's no problem if it already exists.
+        config = GAMConfig.get_instance(gam_config)
+        config.save()
+        GAMConfig.__instance__ = None
+        config = GAMConfig.get_instance(gam_config)
+        config.save()
+        # Make it once after confirming it doesn't exist.
+        GAMConfig.__instance__ = None
+        shutil.rmtree(Path().cwd() / "gam_cache/new_config/", ignore_errors=True)
+        config = GAMConfig.get_instance(gam_config)
+        config.save()
         self.assertTrue(gam_config.is_file())
 
     def test_singleton(self) -> None:
