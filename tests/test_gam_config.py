@@ -67,6 +67,19 @@ class GAMConfigTests(unittest.TestCase):
         config.save()
         self.assertTrue(gam_config.is_file())
 
+    def test_tmp_dir(self) -> None:
+        GAMConfig.__instance__ = None
+        gam_config = Path().cwd() / "gam_config/config.toml"
+        config = GAMConfig.get_instance(gam_config)
+        cache_dir = Path().cwd() / "gam_cache"
+        config.cache_dir = cache_dir
+        tmp_dir = cache_dir.joinpath("tmp")
+        self.assertEqual(tmp_dir.resolve(), config.tmp_dir.resolve())
+        try:
+            config.tmp_dir = tmp_dir
+        except AssertionError:
+            self.assertTrue(True)
+
     def test_singleton(self) -> None:
         GAMConfig.__instance__ = None
         gam_config = Path().cwd() / "gam_config/config.toml"

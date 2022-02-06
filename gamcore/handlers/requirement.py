@@ -54,8 +54,7 @@ class RequirementHandler:
 
     def _get_details_from_file(self) -> GAMProject:
         uid = str(uuid.uuid4())
-        tmp_dir = GAMConfig.get_instance().cache_dir.joinpath("tmp")
-        tmp_dir.mkdir(exist_ok=True)
+        tmp_dir = GAMConfig.get_instance().tmp_dir
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
         _unzip_tar(self.requirement_string, tmp_pkg_dir)

@@ -1,5 +1,6 @@
 """Manage IO to a GAM config file."""
 import os
+import shutil
 from pathlib import Path
 
 import tomlkit
@@ -25,6 +26,9 @@ class GAMConfig:
         if not self.cache_dir.exists():
             os.makedirs(self.cache_dir)
 
+    def __del__(self) -> None:
+        shutil.rmtree(self.tmp_dir)
+
     @property
     def cache_dir(self) -> Path:
         """The GAM cache directory for installed packages."""
@@ -48,6 +52,18 @@ class GAMConfig:
     def path(self, path: Path) -> None:
         self._path = path
         self.load()
+
+    @property
+    def tmp_dir(self):
+        """Get a tmp dir in cache."""
+        tmp_dir = self.cache_dir / "tmp"
+        if not tmp_dir.exists():
+            os.makedirs(tmp_dir)
+        return tmp_dir
+
+    @tmp_dir.setter
+    def tmp_dir(self, tmp_dir: Path) -> None:
+        raise AssertionError("tmp_dir is property is read only.")
 
     @staticmethod
     def get_instance(path: Path | None = None) -> "GAMConfig":
