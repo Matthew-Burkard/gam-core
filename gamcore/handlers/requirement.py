@@ -44,11 +44,11 @@ class RequirementHandler:
             match self.source:
                 case RequirementSourceType.FILE:
                     self._project_details = self._get_details_from_file()
-                case RequirementSourceType.FILE:
+                case RequirementSourceType.GIT:
                     self._project_details = self._get_details_from_git()
-                case RequirementSourceType.FILE:
+                case RequirementSourceType.REPOSITORY:
                     self._project_details = self._get_details_from_repository()
-                case RequirementSourceType.FILE:
+                case RequirementSourceType.URL:
                     self._project_details = self._get_details_from_url()
         return self._project_details
 
