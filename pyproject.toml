@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gam-core"
-version = "0.35.3"
+version = "0.35.4"
 description = ""
 authors = ["Matthew Burkard <matthewjburkard@gmail.com>"]
 
@@ -10,7 +10,7 @@ pydantic = "^1.9.0"
 tomlkit = "^0.9.2"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.0.0"
+pytest = "^7.0.1"
 coverage = "^6.3.1"
 
 [build-system]
