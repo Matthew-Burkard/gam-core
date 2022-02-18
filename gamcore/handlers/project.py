@@ -80,6 +80,15 @@ class ProjectHandler:
         _make_tarfile(str(package_path), str(tarball_path))
         return tarball_path
 
+    def get_installed_version(self, name: str) -> str | None:
+        """Get the currently installed version of a package."""
+        dep_path = self.path.joinpath(f"addons/{name}")
+        if not dep_path.is_dir():
+            return None
+        return parse(dep_path.joinpath("gamproject.toml").read_text())["gamproject"][
+            "version"
+        ]
+
     def _save(self) -> None:
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})
         self.path.joinpath("gamproject.toml").write_text(toml)
