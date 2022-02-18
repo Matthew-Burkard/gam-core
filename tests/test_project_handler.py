@@ -88,3 +88,4 @@ class ProjectHandlerTests(unittest.TestCase):
         self.assertEqual(
             "1.0.0", handler.get_installed_version(existing_dependency_name)
         )
+        self.assertIsNone(handler.get_installed_version("non_existing_dep"))
