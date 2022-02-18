@@ -1,4 +1,5 @@
 """Test GAM project IO and operations."""
+import os
 import shutil
 import unittest
 from pathlib import Path
@@ -11,7 +12,7 @@ class ProjectHandlerTests(unittest.TestCase):
     def __init__(self, *args) -> None:
         gam_config = Path().cwd() / "gam_config/config.toml"
         self.config = GAMConfig.get_instance(gam_config)
-        self.config.cache_dir = Path().cwd() / "/gam_cache"
+        self.config.cache_dir = Path().cwd() / "gam_cache"
         super(ProjectHandlerTests, self).__init__(*args)
 
     def test_new(self) -> None:
@@ -68,4 +69,22 @@ class ProjectHandlerTests(unittest.TestCase):
             test_projects_dir.joinpath(
                 f"{name}/dist/{name}-0.1.0/sub_dir/file"
             ).exists()
+        )
+
+    def test_get_installed_package_version(self) -> None:
+        test_projects_dir = Path.cwd() / "test_projects"
+        name = "test_get_installed_package_version"
+        shutil.rmtree(test_projects_dir.joinpath(name), ignore_errors=True)
+        handler = ProjectHandler.new(test_projects_dir, name)
+        # TODO After adding packages is made, use that instead of faking
+        #  it.
+        existing_dependency_name = "existing_dependency"
+        exist_dep_dir = test_projects_dir / f"{name}/addons/{existing_dependency_name}"
+        os.makedirs(exist_dep_dir)
+        exist_dep_dir.joinpath("gamproject.toml").touch()
+        exist_dep_dir.joinpath("gamproject.toml").write_text(
+            '[gamproject]\nversion="1.0.0"'
+        )
+        self.assertEqual(
+            "1.0.0", handler.get_installed_version(existing_dependency_name)
         )
