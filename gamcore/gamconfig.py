@@ -63,7 +63,7 @@ class GAMConfig:
 
     @tmp_dir.setter
     def tmp_dir(self, tmp_dir: Path) -> None:
-        raise AssertionError("tmp_dir is property is read only.")
+        raise AssertionError("tmp_dir property is read only.")
 
     @staticmethod
     def get_instance(path: Path | None = None) -> "GAMConfig":
