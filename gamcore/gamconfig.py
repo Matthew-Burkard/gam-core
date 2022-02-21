@@ -89,11 +89,11 @@ class GAMConfig:
         }
         if not self._path.exists():
             self._path.touch()
-        self._path.write_text(tomlkit.dumps(gam_dict))
+        self._path.write_text(tomlkit.dumps(gam_dict), encoding="UTF-8")
 
     def load(self) -> None:
         """Load values from config file at path."""
-        gam = tomlkit.parse(self._path.read_text())["gam"]
+        gam = tomlkit.parse(self._path.read_text(encoding="UTF-8"))["gam"]
         self._cache_dir = gam.get("cache_dir")
         # Make path absolute if it's relative.
         self.repositories = gam.get("repositories") or []

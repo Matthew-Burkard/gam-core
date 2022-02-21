@@ -5,7 +5,6 @@ import tarfile
 from pathlib import Path
 
 import tomlkit
-from tomlkit import parse
 
 from gamcore.models import GAMProject
 from gamcore.templates.godot_project_file import project_file
@@ -85,9 +84,9 @@ class ProjectHandler:
         dep_path = self.path.joinpath(f"addons/{name}")
         if not dep_path.is_dir():
             return None
-        return parse(dep_path.joinpath("gamproject.toml").read_text())["gamproject"][
-            "version"
-        ]
+        return tomlkit.parse(dep_path.joinpath("gamproject.toml").read_text())[
+            "gamproject"
+        ]["version"]
 
     def _save(self) -> None:
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})
@@ -98,7 +97,10 @@ class ProjectHandler:
         if not toml_file.exists():
             raise FileNotFoundError()
         details = GAMProject(
-            **{**parse(toml_file.read_text())["gamproject"], **{"path": self.path}}
+            **{
+                **tomlkit.parse(toml_file.read_text())["gamproject"],
+                **{"path": self.path},
+            }
         )
         self.details = details
 
