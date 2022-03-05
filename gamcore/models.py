@@ -9,11 +9,11 @@ class GAMProject(BaseModel):
     version: str
     godot_version: str
     source_directory: str
-    packages: list[str] = Field(default=lambda: [])
+    packages: list[str] = Field(default_factory=lambda: [])
     description: str | None = None
     repository: str | None = None
     homepage: str | None = None
     license: str | None = None
-    authors: list[str] = Field(default=lambda: [])
-    dependencies: list[str] = Field(default=lambda: [])
-    dev_dependencies: list[str] = Field(default=lambda: [])
+    authors: list[str] = Field(default_factory=lambda: [])
+    dependencies: dict[str, str] = Field(default_factory=lambda: {})
+    dev_dependencies: dict[str, str] = Field(default_factory=lambda: {})
