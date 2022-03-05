@@ -3,6 +3,8 @@ import shutil
 import unittest
 from pathlib import Path
 
+import tomlkit
+
 from gamcore.gamconfig import GAMConfig
 
 
@@ -79,6 +81,19 @@ class GAMConfigTests(unittest.TestCase):
             config.tmp_dir = tmp_dir
         except AssertionError:
             self.assertTrue(True)
+
+    def test_new_cache_dir(self) -> None:
+        GAMConfig.__instance__ = None
+        gam_config = Path().cwd() / "gam_cache/new_config/a/config.toml"
+        gam_cache = Path().cwd() / "gam_cache/new_config/a/cache"
+        config = GAMConfig.get_instance(gam_config)
+        config.cache_dir = gam_cache
+        config.save()
+        print(gam_config.read_text())
+        self.assertEqual(
+            gam_cache.resolve().as_posix(),
+            tomlkit.loads(gam_config.read_text())["gam"]["cache_dir"],
+        )
 
     def test_singleton(self) -> None:
         GAMConfig.__instance__ = None
