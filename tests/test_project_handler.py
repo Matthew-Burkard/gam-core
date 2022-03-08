@@ -6,6 +6,7 @@ from pathlib import Path
 
 from gamcore.gamconfig import GAMConfig
 from gamcore.handlers.project import ProjectHandler
+from gamcore.models import Package
 
 
 class ProjectHandlerTests(unittest.TestCase):
@@ -71,21 +72,15 @@ class ProjectHandlerTests(unittest.TestCase):
             ).exists()
         )
 
-    def test_get_installed_package_version(self) -> None:
+    def test_lock_io(self) -> None:
+        name = "test_lock_io"
         test_projects_dir = Path.cwd() / "test_projects"
-        name = "test_get_installed_package_version"
         shutil.rmtree(test_projects_dir.joinpath(name), ignore_errors=True)
         handler = ProjectHandler.new(test_projects_dir, name)
-        # TODO After adding packages is made, use that instead of faking
-        #  it.
-        existing_dependency_name = "existing_dependency"
-        exist_dep_dir = test_projects_dir / f"{name}/addons/{existing_dependency_name}"
-        os.makedirs(exist_dep_dir)
-        exist_dep_dir.joinpath("gamproject.toml").touch()
-        exist_dep_dir.joinpath("gamproject.toml").write_text(
-            '[gamproject]\nversion="1.0.0"'
-        )
-        self.assertEqual(
-            "1.0.0", handler.get_installed_version(existing_dependency_name)
-        )
-        self.assertIsNone(handler.get_installed_version("non_existing_dep"))
+        packages = [
+            Package(dependencies={"coffee": "^1.0.0", "caramel": "0.1.0"}),
+            Package(dependencies={"coffee": "^1.1.0", "donut": "2.1.0"}),
+        ]
+        # This isn't a straightforward setter/getter.
+        handler.installed_packages = packages
+        self.assertEqual(packages, handler.installed_packages)
