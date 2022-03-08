@@ -1,6 +1,7 @@
 """Manage requirements data."""
 import os
 import re
+import shutil
 import tarfile
 import uuid
 from enum import auto, Enum
@@ -67,6 +68,7 @@ class RequirementHandler:
             break
         # Load GAM project details of added package.
         project = ProjectHandler(unpacked_pkg_dir)
+        shutil.rmtree(tmp_pkg_dir)
         return project.details
 
     def _get_details_from_git(self) -> GAMProject:
