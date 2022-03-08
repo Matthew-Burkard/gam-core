@@ -6,7 +6,7 @@ from pathlib import Path
 
 import tomlkit
 
-from gamcore.models import GAMProject
+from gamcore.models import GAMProject, Package
 from gamcore.templates.godot_project_file import project_file
 
 __all__ = ("ProjectHandler",)
@@ -23,6 +23,23 @@ class ProjectHandler:
             self._save()
         else:
             self._load()
+
+    @property
+    def installed_packages(self) -> list[Package]:
+        """Get all installed packages for this project."""
+        return [
+            Package(**it)
+            for it in tomlkit.loads(self.path.joinpath("gam.lock").read_text())[
+                "package"
+            ]
+        ]
+
+    @installed_packages.setter
+    def installed_packages(self, packages: list[Package]) -> None:
+        """Get all installed packages for this project."""
+        self.path.joinpath("gam.lock").write_text(
+            tomlkit.dumps({"package": [it.dict(exclude_unset=True) for it in packages]})
+        )
 
     @staticmethod
     def new(path: Path | str, name: str) -> "ProjectHandler":
@@ -78,15 +95,6 @@ class ProjectHandler:
         )
         _make_tarfile(str(package_path), str(tarball_path))
         return tarball_path
-
-    def get_installed_version(self, name: str) -> str | None:
-        """Get the currently installed version of a package."""
-        dep_path = self.path.joinpath(f"addons/{name}")
-        if not dep_path.is_dir():
-            return None
-        return tomlkit.parse(dep_path.joinpath("gamproject.toml").read_text())[
-            "gamproject"
-        ]["version"]
 
     def _save(self) -> None:
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})
