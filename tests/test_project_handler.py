@@ -82,5 +82,5 @@ class ProjectHandlerTests(unittest.TestCase):
             Package(dependencies={"coffee": "^1.1.0", "donut": "2.1.0"}),
         ]
         # This isn't a straightforward setter/getter.
-        handler.installed_packages = packages
-        self.assertEqual(packages, handler.installed_packages)
+        handler.lock_packages = packages
+        self.assertEqual(packages, handler.lock_packages)

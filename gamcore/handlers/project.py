@@ -25,7 +25,7 @@ class ProjectHandler:
             self._load()
 
     @property
-    def installed_packages(self) -> list[Package]:
+    def lock_packages(self) -> list[Package]:
         """Get all installed packages for this project."""
         return [
             Package(**it)
@@ -34,8 +34,8 @@ class ProjectHandler:
             ]
         ]
 
-    @installed_packages.setter
-    def installed_packages(self, packages: list[Package]) -> None:
+    @lock_packages.setter
+    def lock_packages(self, packages: list[Package]) -> None:
         """Get all installed packages for this project."""
         self.path.joinpath("gam.lock").write_text(
             tomlkit.dumps({"package": [it.dict(exclude_unset=True) for it in packages]})
