@@ -26,7 +26,7 @@ class ProjectHandler:
 
     @property
     def lock_packages(self) -> list[Package]:
-        """Get all installed packages for this project."""
+        """Get lock project packages."""
         return [
             Package(**it)
             for it in tomlkit.loads(self.path.joinpath("gam.lock").read_text())[
@@ -36,7 +36,7 @@ class ProjectHandler:
 
     @lock_packages.setter
     def lock_packages(self, packages: list[Package]) -> None:
-        """Get all installed packages for this project."""
+        """Set lock project packages."""
         self.path.joinpath("gam.lock").write_text(
             tomlkit.dumps({"package": [it.dict(exclude_unset=True) for it in packages]})
         )
@@ -95,6 +95,16 @@ class ProjectHandler:
         )
         _make_tarfile(str(package_path), str(tarball_path))
         return tarball_path
+
+    def get_installed_packages(self) -> list[GAMProject]:
+        """Get all installed packages for this project."""
+        projects = []
+        addons = self.path / "addons"
+        for directory in os.listdir(addons):
+            installed_project = Path(addons / directory)
+            if installed_project.joinpath("gamproject.toml").is_file():
+                projects.append(ProjectHandler(installed_project).details)
+        return projects
 
     def _save(self) -> None:
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})

@@ -89,7 +89,6 @@ class GAMConfigTests(unittest.TestCase):
         config = GAMConfig.get_instance(gam_config)
         config.cache_dir = gam_cache
         config.save()
-        print(gam_config.read_text())
         self.assertEqual(
             gam_cache.resolve().as_posix(),
             tomlkit.loads(gam_config.read_text())["gam"]["cache_dir"],

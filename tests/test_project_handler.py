@@ -84,3 +84,18 @@ class ProjectHandlerTests(unittest.TestCase):
         # This isn't a straightforward setter/getter.
         handler.lock_packages = packages
         self.assertEqual(packages, handler.lock_packages)
+
+    def test_get_installed_packages(self) -> None:
+        test_projects_dir = Path.cwd() / "test_projects"
+        name = "test_get_installed"
+        project_dir = test_projects_dir.joinpath(name)
+        shutil.rmtree(project_dir, ignore_errors=True)
+        project = ProjectHandler.new(test_projects_dir, name)
+        addons = project_dir / "addons"
+        addons.mkdir()
+        ProjectHandler.new(addons, "installed_one")
+        ProjectHandler.new(addons, "installed_two")
+        self.assertEqual(
+            ["installed_one", "installed_two"],
+            [p.name for p in project.get_installed_packages()],
+        )
