@@ -1,9 +1,10 @@
 """Test GAM project IO and operations."""
-import os
 import shutil
 import unittest
 from pathlib import Path
 
+# noinspection PyProtectedMember
+from gamcore._util import get_installed_packages
 from gamcore.gamconfig import GAMConfig
 from gamcore.handlers.project import ProjectHandler
 from gamcore.models import Package
@@ -97,5 +98,5 @@ class ProjectHandlerTests(unittest.TestCase):
         ProjectHandler.new(addons, "installed_two")
         self.assertEqual(
             ["installed_one", "installed_two"],
-            [p.name for p in project.get_installed_packages()],
+            [p.name for p in get_installed_packages(project.path)],
         )

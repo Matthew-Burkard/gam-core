@@ -96,18 +96,8 @@ class ProjectHandler:
         _make_tarfile(str(package_path), str(tarball_path))
         return tarball_path
 
-    def get_installed_packages(self) -> list[GAMProject]:
-        """Get all installed packages for this project."""
-        projects = []
-        addons = self.path / "addons"
-        for directory in os.listdir(addons):
-            installed_project = Path(addons / directory)
-            if installed_project.joinpath("gamproject.toml").is_file():
-                projects.append(ProjectHandler(installed_project).details)
-        return projects
-
     def _save(self) -> None:
-        toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_unset=True)})
+        toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_none=True)})
         self.path.joinpath("gamproject.toml").write_text(toml)
 
     def _load(self) -> None:
