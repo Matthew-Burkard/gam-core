@@ -35,6 +35,10 @@ class AddHandler:
         for req in self._unmet_requirements:
             InstallHandler(self._project.path, req).execute()
         InstallHandler(self._project.path, self._requirement).execute()
+        self._project.details.dependencies[
+            self._requirement.project_details.name
+        ] = self._requirement.version_rule
+        self._project.save()
 
     def _gather_requirements(self) -> None:
         self._get_dependencies(self._requirement)

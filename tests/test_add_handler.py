@@ -71,3 +71,6 @@ class AddHandlerTests(unittest.TestCase):
             "some text",
             project.path.joinpath("addons", dep_name, "some_file").read_text(),
         )
+        self.assertDictEqual(
+            {"test_file_add_dep": "^0.1.0"}, project.details.dependencies
+        )
