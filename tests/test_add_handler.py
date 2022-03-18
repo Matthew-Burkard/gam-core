@@ -28,7 +28,7 @@ class AddHandlerTests(unittest.TestCase):
         file_dep_project = ProjectHandler.new(test_projects_dir, file_dep_name)
         file_dep_tarball = file_dep_project.build()
         project.details.dependencies[file_dep_name] = file_dep_tarball.as_posix()
-        project._save()
+        project.save()
         # TODO Add git dependency to requirement.
         # TODO Add repository dependency to requirement.
         # Test requirements.
@@ -36,7 +36,7 @@ class AddHandlerTests(unittest.TestCase):
         # Make the project itself the thing added since it had all the
         # dependencies.
         add_handler = AddHandler(
-            project.path, RequirementHandler(project_tarball.resolve().as_posix())
+            project, RequirementHandler(project_tarball.resolve().as_posix())
         )
         add_handler._gather_requirements()
         self.assertEqual(
@@ -61,10 +61,10 @@ class AddHandlerTests(unittest.TestCase):
         dep_file.write_text("some text")
         dep_tarball = dep_project.build()
         project.details.dependencies[dep_name] = dep_tarball.as_posix()
-        project._save()
+        project.save()
         # Test add.
         add_handler = AddHandler(
-            project.path, RequirementHandler(dep_tarball.resolve().as_posix())
+            project, RequirementHandler(dep_tarball.resolve().as_posix())
         )
         add_handler.execute()
         self.assertEqual(

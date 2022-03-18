@@ -20,7 +20,7 @@ class ProjectHandler:
         self.path: Path = Path(path)
         self.details: GAMProject | None = details
         if self.details:
-            self._save()
+            self.save()
         else:
             self._load()
 
@@ -96,7 +96,8 @@ class ProjectHandler:
         _make_tarfile(str(package_path), str(tarball_path))
         return tarball_path
 
-    def _save(self) -> None:
+    def save(self) -> None:
+        """Save the state of this handler to the "gamproject" file."""
         toml = tomlkit.dumps({"gamproject": self.details.dict(exclude_none=True)})
         self.path.joinpath("gamproject.toml").write_text(toml)
 

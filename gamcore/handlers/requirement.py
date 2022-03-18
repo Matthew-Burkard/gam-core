@@ -59,6 +59,13 @@ class RequirementHandler:
                     self._project_details = self._get_details_from_url()
         return self._project_details
 
+    @property
+    def version_rule(self) -> str:
+        """The version rule of this requirement."""
+        if self._version_rule is not None:
+            return self._version_rule
+        return self.project_details.version
+
     def _get_details_from_file(self) -> GAMProject:
         uid = str(uuid.uuid4())
         tmp_dir = GAMConfig.get_instance().tmp_dir

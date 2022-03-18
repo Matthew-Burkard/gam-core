@@ -1,8 +1,8 @@
 """Add a requirement to a project."""
-from pathlib import Path
 
 from gamcore._util import get_installed_packages
 from gamcore.handlers.install import InstallHandler
+from gamcore.handlers.project import ProjectHandler
 from gamcore.handlers.requirement import RequirementHandler
 
 
@@ -11,15 +11,15 @@ class AddHandler:
 
     def __init__(
         self,
-        project_path: str | Path,
+        project: ProjectHandler,
         requirement: RequirementHandler,
     ) -> None:
         """Init a handler to add a requirement.
 
-        :param project_path: Path to project adding a requirement.
+        :param project: Project adding a requirement.
         :param requirement: The requirement being added.
         """
-        self._project_path = project_path
+        self._project = project
         self._requirement = requirement
         # All dependencies.
         self._dependencies: dict[str, str] = {}
@@ -31,16 +31,16 @@ class AddHandler:
     def execute(self) -> None:
         """Add the package."""
         self._gather_requirements()
-        self._project_path.joinpath("addons").mkdir(exist_ok=True)
+        self._project.path.joinpath("addons").mkdir(exist_ok=True)
         for req in self._unmet_requirements:
-            InstallHandler(self._project_path, req).execute()
-        InstallHandler(self._project_path, self._requirement).execute()
+            InstallHandler(self._project.path, req).execute()
+        InstallHandler(self._project.path, self._requirement).execute()
 
     def _gather_requirements(self) -> None:
         self._get_dependencies(self._requirement)
         self._installed_dependencies = {
             it.name: it.version
-            for it in get_installed_packages(self._project_path)
+            for it in get_installed_packages(self._project.path)
             if it.name in self._dependencies
         }
         unmet_dependencies = {
