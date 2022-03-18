@@ -14,6 +14,11 @@ class AddHandler:
         project_path: str | Path,
         requirement: RequirementHandler,
     ) -> None:
+        """Init a handler to add a requirement.
+
+        :param project_path: Path to project adding a requirement.
+        :param requirement: The requirement being added.
+        """
         self._project_path = project_path
         self._requirement = requirement
         # All dependencies.
@@ -21,7 +26,7 @@ class AddHandler:
         # Dependencies that are already installed.
         self._installed_dependencies: dict[str, str] = {}
         # Dependencies that need to be installed.
-        self._unmet_requirements: list[RequirementHandler] = []
+        self._unmet_requirements: list[RequirementHandler] = [requirement]
 
     def execute(self) -> None:
         """Add the package."""

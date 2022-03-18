@@ -31,13 +31,43 @@ class AddHandlerTests(unittest.TestCase):
         project._save()
         # TODO Add git dependency to requirement.
         # TODO Add repository dependency to requirement.
-        # Gather requirements.
+        # Test requirements.
         project_tarball = project.build()
+        # Make the project itself the thing added since it had all the
+        # dependencies.
         add_handler = AddHandler(
             project.path, RequirementHandler(project_tarball.resolve().as_posix())
         )
         add_handler._gather_requirements()
         self.assertEqual(
-            [file_dep_name],
+            [name, file_dep_name],
             [it.project_details.name for it in add_handler._unmet_requirements],
+        )
+
+    def test_execute_file_add(self) -> None:
+        test_projects_dir = Path.cwd() / "test_projects"
+        name = "test_file_add"
+        project_dir = test_projects_dir.joinpath(name)
+        shutil.rmtree(project_dir, ignore_errors=True)
+        project = ProjectHandler.new(test_projects_dir, name)
+        # Add file dependency to requirement.
+        dep_name = "test_file_add_dep"
+        dep_dir = test_projects_dir.joinpath(dep_name)
+        shutil.rmtree(dep_dir, ignore_errors=True)
+        dep_project = ProjectHandler.new(test_projects_dir, dep_name)
+        # Create sample file with text.
+        dep_file = dep_project.path.joinpath("src/some_file")
+        dep_file.touch()
+        dep_file.write_text("some text")
+        dep_tarball = dep_project.build()
+        project.details.dependencies[dep_name] = dep_tarball.as_posix()
+        project._save()
+        # Test add.
+        add_handler = AddHandler(
+            project.path, RequirementHandler(dep_tarball.resolve().as_posix())
+        )
+        add_handler.execute()
+        self.assertEqual(
+            "some text",
+            project.path.joinpath("addons", dep_name, "some_file").read_text(),
         )

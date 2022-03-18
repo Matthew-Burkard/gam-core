@@ -25,10 +25,9 @@ class RequirementHandler:
     """Represents a GAM project requirement."""
 
     def __init__(self, requirement_string: str):
-        # TODO Split on "@"
+        self.filepath: str | None = None
         self._name: str | None = None
         self._version_rule: str | None = None
-        self._filepath: str | None = None
         if "@" in requirement_string:
             self._name, self._version_rule = requirement_string.split("@")
         self.requirement_string = requirement_string
@@ -65,7 +64,7 @@ class RequirementHandler:
         tmp_dir = GAMConfig.get_instance().tmp_dir
         tmp_pkg_dir = tmp_dir.joinpath(uid)
         tmp_pkg_dir.mkdir(exist_ok=True)
-        _unzip_tar(self._filepath, tmp_pkg_dir)
+        _unzip_tar(self.filepath, tmp_pkg_dir)
         # Search content of tmp_pkg_dir to get extracted directory name.
         unpacked_pkg_dir = None
         for path, directories, files in os.walk(tmp_pkg_dir):
@@ -90,16 +89,16 @@ class RequirementHandler:
     def _is_filepath(self) -> bool:
         if self._version_rule is not None:
             if Path(self._version_rule).is_file():
-                self._filepath = self._version_rule
+                self.filepath = self._version_rule
                 return True
             if Path.cwd().joinpath(self._version_rule).is_file():
-                self._filepath = Path.cwd().joinpath(self._version_rule)
+                self.filepath = Path.cwd().joinpath(self._version_rule)
                 return True
         if Path(self.requirement_string).is_file():
-            self._filepath = Path(self.requirement_string)
+            self.filepath = Path(self.requirement_string)
             return True
         if Path.cwd().joinpath(self.requirement_string).is_file():
-            self._filepath = Path.cwd().joinpath(self.requirement_string)
+            self.filepath = Path.cwd().joinpath(self.requirement_string)
             return True
         return False
 
